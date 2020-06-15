@@ -21,7 +21,6 @@
 #include "field.h"
 #include <stdlib.h>
 
-typedef size_t coord_t;
 typedef enum direction_e {NORTH, EAST, WEST, SOUTH} direction_t;
 
 typedef struct body_s

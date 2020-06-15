@@ -54,6 +54,34 @@ init_field(size_t width, size_t height)
 	return (field);
 }
 
+int
+add_food(field_t *field)
+{
+	coord_t empty_cells[(field->width - 2) * (field->height - 2)][2];
+	size_t i, j, size = 0;
+
+	/* Find all the EMPTY cells and store their coordinates in empty_cells */
+	for (i = 1; i <= field->height - 2; i++)
+	{
+		for (j = 1; j <= field->width - 2; j++)
+		{
+			if (field->matrix[i][j] == EMPTY)
+			{
+				empty_cells[size][0] = i;
+				empty_cells[size][1] = j;
+				size++;
+			}
+		}
+	}
+
+	if (size == 0)
+		return (0);
+
+	i = rand() % size;  /* Choose a random item of empty_cells */
+	field->matrix[empty_cells[i][0]][empty_cells[i][1]] = FOOD;
+	return (1);
+}
+
 void
 delete_field(field_t *field)
 {
