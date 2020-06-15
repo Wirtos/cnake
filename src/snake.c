@@ -34,7 +34,7 @@ init_snake(field_t *field)
 	snake->tail->y = (rand() % (field->height - 4)) + 2;
 	snake->tail->x = (rand() % (field->width - 4)) + 2;
 	snake->tail->next = NULL;
-	snake->head = tail;
+	snake->head = snake->tail;
 
 	return (snake);
 }
@@ -112,17 +112,17 @@ advance(field_t *field, snake_t *snake)
 			break;  /* Is ded so nothing to do */
 	}
 
-	return (field->matrix[next_y][next_x])
+	return (field->matrix[next_y][next_x]);
 }
 
 /*
  * Recursively free body from the tail
  */
 static void
-delele_body(body_t *node)
+delete_body(body_t *node)
 {
 	if (node->next)
-		delele_body(node->next);
+		delete_body(node->next);
 	free(node);
 }
 
