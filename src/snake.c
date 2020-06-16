@@ -36,6 +36,8 @@ init_snake(field_t *field)
 	snake->tail->next = NULL;
 	snake->head = snake->tail;
 
+	field->matrix[snake->head->y][snake->head->x] = HEAD;
+
 	return (snake);
 }
 
@@ -47,7 +49,8 @@ static void
 append_head(field_t *field, snake_t *snake, coord_t y, coord_t x)
 {
 	/* In the field */
-	field->matrix[y][x] = SNAKE;
+	field->matrix[snake->head->y][snake->head->x] = SNAKE;
+	field->matrix[y][x] = HEAD;
 
 	/* In the snake */
 	snake->head->next = malloc(sizeof(body_t));
@@ -78,6 +81,7 @@ cell_t
 advance(field_t *field, snake_t *snake)
 {
 	coord_t next_y, next_x;
+	cell_t old_type;
 
 	switch (snake->direction)
 	{
@@ -98,7 +102,7 @@ advance(field_t *field, snake_t *snake)
 			next_x = snake->head->x;
 	}
 
-	switch (field->matrix[next_y][next_x])
+	switch (old_type = field->matrix[next_y][next_x])
 	{
 		case EMPTY:
 			append_head(field, snake, next_y, next_x);
@@ -109,10 +113,11 @@ advance(field_t *field, snake_t *snake)
 			break;
 		case BORDER:
 		case SNAKE:
+		case HEAD:
 			break;  /* Is ded so nothing to do */
 	}
 
-	return (field->matrix[next_y][next_x]);
+	return (old_type);
 }
 
 /*

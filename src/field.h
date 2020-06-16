@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 typedef size_t coord_t;
-typedef enum cell_e {EMPTY, SNAKE, FOOD, BORDER} cell_t;
+typedef enum cell_e {EMPTY, SNAKE, HEAD, FOOD, BORDER} cell_t;
 
 typedef struct
 {
@@ -34,7 +34,7 @@ typedef struct
  * Initialize a field with empty (incl. borders) matrix
  */
 field_t*
-init_field(size_t width, size_t height);
+init_field(size_t height, size_t width);
 
 /*
  * Add a random cell with food into the matrix. Return 0 if there wasn't

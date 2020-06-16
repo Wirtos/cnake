@@ -18,7 +18,7 @@
 #include "field.h"
 
 field_t*
-init_field(size_t width, size_t height)
+init_field(size_t height, size_t width)
 {
 	field_t *field;
 	size_t i;
