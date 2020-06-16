@@ -21,12 +21,12 @@
 #include <stdlib.h>
 
 typedef size_t coord_t;
-typedef enum cell_e {EMPTY, SNAKE, HEAD, FOOD, BORDER} cell_t;
+typedef enum {EMPTY, SNAKE, HEAD, FOOD, BORDER} cell_t;
 
 typedef struct
 {
 	size_t width, height;
-	enum cell_e **matrix;  /* [height][width] */
+	cell_t **matrix;  /* [height][width] */
 } field_t;
 
 
