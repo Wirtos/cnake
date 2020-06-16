@@ -27,7 +27,7 @@ init_snake(field_t *field)
 
 	/* Random initial direction */
 	srand(time(NULL));
-	snake->direction = rand() % 5;
+	snake->direction = rand() % 4;
 
 	snake->tail = malloc(sizeof(body_t));
 	/* Choose random place without direct contact with the borders */
