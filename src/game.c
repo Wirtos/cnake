@@ -258,6 +258,7 @@ main()
 	cbreak();             /* Do not buffer keypresses */
 	noecho();             /* Do not show keypresses */
 	keypad(stdscr, TRUE); /* Enable special keys */
+	curs_set(0);          /* Hide cursor */
 
 	start();
 
