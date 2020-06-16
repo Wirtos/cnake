@@ -27,7 +27,7 @@
 #define MINIMUM_COLS 70
 #define WIDTH_W_KEYS 28
 
-#define DELAY 500 /* milliseconds */
+#define DELAY 300 /* milliseconds */
 
 #define PAIR_DEFAULT 1
 #define PAIR_SCORE 2
@@ -155,6 +155,22 @@ redraw_game(WINDOW *w_game, field_t *field, direction_t direction)
 }
 
 void
+pause(WINDOW *w_game)
+{
+	int max_y, max_x;
+
+	getmaxyx(w_game, max_y, max_x);
+	wattron(w_game, A_REVERSE);
+	mvwaddstr(w_game, max_y / 2, max_x / 2 - 3, "PAUSED");
+	wattroff(w_game, A_REVERSE);
+	wrefresh(w_game);
+
+	timeout(-1);  /* Take out timeout */
+	getch();
+	timeout(DELAY);  /* Restore timeout */
+}
+
+void
 start()
 {
 	WINDOW *w_score, *w_game, *w_keys;
@@ -214,9 +230,7 @@ start()
 				snake->direction = EAST;
 				break;
 			case 'p':
-				timeout(-1);  /* Take out timeout */
-				getch();
-				timeout(DELAY);  /* Restore timeout */
+				pause(w_game);
 				break;
 			case 'q':
 				keep_mainloop = 0;
