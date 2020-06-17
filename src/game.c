@@ -15,8 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "field.h"
-#include "snake.h"
+#include <field.h>
+#include <snake.h>
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "field.h"
+#include <field.h>
 
 field_t*
 init_field(int height, int width)

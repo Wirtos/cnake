@@ -18,7 +18,7 @@
 #ifndef SNAKE_H
 #define SNAKE_H
 
-#include "field.h"
+#include <field.h>
 #include <stdlib.h>
 
 typedef enum {NORTH, EAST, WEST, SOUTH} direction_t;

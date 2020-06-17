@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "snake.h"
+#include <snake.h>
 #include <time.h>
 
 snake_t*
