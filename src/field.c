@@ -102,7 +102,7 @@ init_field(int height, int width, int permill_obstacles)
 		field->matrix[i][width - 1] = BORDER;
 
 	/* Obstacles */
-	number_obstacles = (height-1) * (width-1) * permill_obstacles / 1000;
+	number_obstacles = (height-2) * (width-2) * permill_obstacles / 1000;
 	for (i = 0; i < number_obstacles; i++)
 		add_obstacle(field);
 
