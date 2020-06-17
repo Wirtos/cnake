@@ -17,15 +17,15 @@
 
 #include <field.h>
 #include <snake.h>
+#include <arguments_parser.h>
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 /* Some constants */
 
-#define MINIMUM_LINES 10
-#define MINIMUM_COLS 70
-#define WIDTH_W_KEYS 28
+#define DEFAULT_W_GAME_HEIGHT 26
+#define DEFAULT_W_GAME_WIDTH 66
 
 #define DELAY 300 /* milliseconds */
 
@@ -37,23 +37,18 @@
 #define PAIR_FOOD 6
 #define PAIR_TITLE 7
 
+#define WIDTH_W_KEYS 28
+
 /*
- * Checks terminal size and prepares colors
+ * Prepares colors
  */
-void
+static void
 set_curses_properties()
 {
-	if (LINES < MINIMUM_LINES || COLS < MINIMUM_COLS)
-	{
-		endwin();
-		fprintf(stderr, "Terminal too small\n");
-		exit(1);
-	}
-
-	/* Color pairs definitions */
 	start_color();
 	use_default_colors();
 
+	/* Color pairs definitions */
 	init_pair(PAIR_DEFAULT, -1, -1);
 	init_pair(PAIR_SCORE, COLOR_YELLOW, -1);
 	init_pair(PAIR_BORDER, COLOR_MAGENTA, -1);
@@ -68,7 +63,7 @@ set_curses_properties()
 /*
  * Updates score marker
  */
-void
+static void
 redraw_score(WINDOW *w_score, unsigned int score)
 {
 	mvwaddstr(w_score, 0, 0, "Score: ");
@@ -84,7 +79,7 @@ redraw_score(WINDOW *w_score, unsigned int score)
 /*
  * Draws the keys window
  */
-void
+static void
 draw_keys(WINDOW *w_keys)
 {
 	wborder(w_keys, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -106,7 +101,7 @@ draw_keys(WINDOW *w_keys)
 /*
  * Updates game window acording to the field's map
  */
-void
+static void
 redraw_game(WINDOW *w_game, field_t *field, direction_t direction)
 {
 	int i, j;
@@ -154,7 +149,10 @@ redraw_game(WINDOW *w_game, field_t *field, direction_t direction)
 	wnoutrefresh(w_game);
 }
 
-void
+/*
+ * Pause game and display PAUSED banner in w_game
+ */
+static void
 pause(WINDOW *w_game)
 {
 	int max_y, max_x;
@@ -170,14 +168,16 @@ pause(WINDOW *w_game)
 	timeout(DELAY);  /* Restore timeout */
 }
 
-void
-start()
+/*
+ * Initialize data structures and run game mainloop
+ */
+static void
+start(int height_game, int width_game)
 {
 	WINDOW *w_score, *w_game, *w_keys;
 	field_t *field;
 	snake_t *snake;
-	unsigned int score = 0;
-	int keep_mainloop = 1, height_game, width_game;
+	unsigned int w_game_y, score = 0, keep_mainloop = 1;
 
 	set_curses_properties();
 
@@ -187,10 +187,9 @@ start()
 	attroff(COLOR_PAIR(PAIR_TITLE) | A_BOLD);
 	wnoutrefresh(stdscr);
 
-	height_game = LINES - 4;
-	width_game = COLS - WIDTH_W_KEYS - 3;
-	w_score = newwin(1, COLS - 1, 3, 1);
-	w_game = newwin(height_game, width_game, 4, 1);
+	w_game_y = (LINES+3)/2 - height_game/2;  /* Starting line of w_game */
+	w_score = newwin(1, COLS - WIDTH_W_KEYS - 4, w_game_y - 1, 1);
+	w_game = newwin(height_game, width_game, w_game_y, 1);
 	w_keys = newwin(11, WIDTH_W_KEYS, LINES/2 - 5, COLS - WIDTH_W_KEYS - 1);
 
 	field = init_field(height_game, width_game);
@@ -263,9 +262,48 @@ start()
 	printf("Your score: %u\n", score);
 }
 
-int
-main()
+/*
+ * Extract height and width from args. If they are unspeficied, set the
+ * default values. Also checks them against terminal size.
+ * NEEDS INITIALIZED NCURSES
+ */
+static void
+get_map_dimensions(arguments_t *args, int *height, int *width)
 {
+	if (args->use_terminal_dimensions)
+	{
+		*height = LINES - 4;
+		*width = COLS - WIDTH_W_KEYS - 3;
+	}
+	else
+	{
+		*height = args->height == -1 ? DEFAULT_W_GAME_HEIGHT : args->height;
+		*width = args->width == -1 ? DEFAULT_W_GAME_WIDTH : args->width;
+	}
+
+	/* Check terminal size */
+	if (*height + 3 > LINES)
+	{
+		endwin();
+		delete_arguments(args);
+		fputs("Terminal height too small\n", stderr);
+		exit(1);
+	}
+	if (*width + WIDTH_W_KEYS + 3 > COLS)
+	{
+		endwin();
+		delete_arguments(args);
+		fputs("Terminal width too small\n", stderr);
+		exit(1);
+	}
+}
+
+int
+main(int argc, char *argv[])
+{
+	arguments_t *args = parse_arguments(argc, argv);
+	int height, width;
+
 	initscr();
 
 	timeout(DELAY);       /* Set timeout for keypresses */
@@ -274,7 +312,10 @@ main()
 	keypad(stdscr, TRUE); /* Enable special keys */
 	curs_set(0);          /* Hide cursor */
 
-	start();
+	get_map_dimensions(args, &height, &width);
+	delete_arguments(args);
+
+	start(height, width);
 
 	return (0);
 }
