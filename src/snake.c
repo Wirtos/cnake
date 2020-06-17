@@ -114,6 +114,7 @@ advance(field_t *field, snake_t *snake)
 		case BORDER:
 		case SNAKE:
 		case HEAD:
+		case OBSTACLE:
 			break;  /* Is ded so nothing to do */
 	}
 

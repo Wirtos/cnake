@@ -26,6 +26,7 @@
 
 #define DEFAULT_W_GAME_HEIGHT 26
 #define DEFAULT_W_GAME_WIDTH 66
+#define DEFAULT_PERMILL_OBSTACLES 5
 
 #define DELAY 300 /* milliseconds */
 
@@ -142,6 +143,9 @@ redraw_game(WINDOW *w_game, field_t *field, direction_t direction)
 					break;
 				case BORDER:
 					mvwaddch(w_game, i, j, '*' | COLOR_PAIR(PAIR_BORDER));
+					break;
+				case OBSTACLE:
+					mvwaddch(w_game, i, j, 'x' | COLOR_PAIR(PAIR_BORDER));
 			}
 		}
 	}
@@ -172,7 +176,7 @@ pause(WINDOW *w_game)
  * Initialize data structures and run game mainloop
  */
 static void
-start(int height_game, int width_game)
+start(int height_game, int width_game, int permill_obstacles)
 {
 	WINDOW *w_score, *w_game, *w_keys;
 	field_t *field;
@@ -192,7 +196,7 @@ start(int height_game, int width_game)
 	w_game = newwin(height_game, width_game, w_game_y, 1);
 	w_keys = newwin(11, WIDTH_W_KEYS, LINES/2 - 5, COLS - WIDTH_W_KEYS - 1);
 
-	field = init_field(height_game, width_game);
+	field = init_field(height_game, width_game, permill_obstacles);
 	snake = init_snake(field);
 	add_food(field);
 
@@ -243,6 +247,7 @@ start(int height_game, int width_game)
 			case SNAKE:
 			case HEAD:
 			case BORDER:
+			case OBSTACLE:
 				keep_mainloop = 0;
 				break;
 			case FOOD:
@@ -298,11 +303,24 @@ get_map_dimensions(arguments_t *args, int *height, int *width)
 	}
 }
 
+/*
+ * Extract permill of obstacles from args. If it is unspeficied, set the
+ * default value.
+ */
+static void
+get_permill_obstacles(arguments_t *args, int *permill_obstacles)
+{
+	if (args->permill_obstacles == -1)
+		*permill_obstacles = DEFAULT_PERMILL_OBSTACLES;
+	else
+		*permill_obstacles = args->permill_obstacles;
+}
+
 int
 main(int argc, char *argv[])
 {
 	arguments_t *args = parse_arguments(argc, argv);
-	int height, width;
+	int height, width, permill_obstacles;
 
 	initscr();
 
@@ -313,9 +331,10 @@ main(int argc, char *argv[])
 	curs_set(0);          /* Hide cursor */
 
 	get_map_dimensions(args, &height, &width);
+	get_permill_obstacles(args, &permill_obstacles);
 	delete_arguments(args);
 
-	start(height, width);
+	start(height, width, permill_obstacles);
 
 	return (0);
 }

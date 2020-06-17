@@ -22,6 +22,7 @@ typedef struct arguments_s
 {
 	int height, width;  /* Value -1 means no specified */
 	int use_terminal_dimensions;
+	int permill_obstacles;
 } arguments_t;
 
 /*

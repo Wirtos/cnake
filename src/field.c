@@ -17,11 +17,61 @@
 
 #include <field.h>
 
+/*
+ * Stores in (*y, *x) the coordinate of a random empty cell. Returns 0 if
+ * no empty cells are found
+ */
+static int
+get_random_empty_cell(field_t *field, coord_t *y, coord_t *x)
+{
+	coord_t empty_cells[(field->width - 2) * (field->height - 2)][2]; int i, j, size = 0;
+
+	/* Find all the EMPTY cells and store their coordinates in empty_cells */
+	for (i = 1; i <= field->height - 2; i++)
+	{
+		for (j = 1; j <= field->width - 2; j++)
+		{
+			if (field->matrix[i][j] == EMPTY)
+			{
+				empty_cells[size][0] = i;
+				empty_cells[size][1] = j;
+				size++;
+			}
+		}
+	}
+
+	if (size > 0)
+	{
+		i = rand() % size;  /* Choose a random item of empty_cells */
+		*y = empty_cells[i][0];
+		*x = empty_cells[i][1];
+		return (1);
+	}
+	return (0);
+}
+
+/*
+ * Add a random cell with food into the matrix. Return 0 if there wasn't
+ * space for it. Return 1 in success
+ */
+static int
+add_obstacle(field_t *field)
+{
+	coord_t y, x;
+
+	if (get_random_empty_cell(field, &y, &x))
+	{
+		field->matrix[y][x] = OBSTACLE;
+		return (1);
+	}
+	return (0);
+}
+
 field_t*
-init_field(int height, int width)
+init_field(int height, int width, int permill_obstacles)
 {
 	field_t *field;
-	int i, j;
+	int i, j, number_obstacles;
 
 	field = malloc(sizeof(field_t));
 	field->width = width;
@@ -51,35 +101,25 @@ init_field(int height, int width)
 	for (i = 0; i < height; i++)
 		field->matrix[i][width - 1] = BORDER;
 
+	/* Obstacles */
+	number_obstacles = (height-1) * (width-1) * permill_obstacles / 1000;
+	for (i = 0; i < number_obstacles; i++)
+		add_obstacle(field);
+
 	return (field);
 }
 
 int
 add_food(field_t *field)
 {
-	coord_t empty_cells[(field->width - 2) * (field->height - 2)][2];
-	int i, j, size = 0;
+	coord_t y, x;
 
-	/* Find all the EMPTY cells and store their coordinates in empty_cells */
-	for (i = 1; i <= field->height - 2; i++)
+	if (get_random_empty_cell(field, &y, &x))
 	{
-		for (j = 1; j <= field->width - 2; j++)
-		{
-			if (field->matrix[i][j] == EMPTY)
-			{
-				empty_cells[size][0] = i;
-				empty_cells[size][1] = j;
-				size++;
-			}
-		}
+		field->matrix[y][x] = FOOD;
+		return (1);
 	}
-
-	if (size == 0)
-		return (0);
-
-	i = rand() % size;  /* Choose a random item of empty_cells */
-	field->matrix[empty_cells[i][0]][empty_cells[i][1]] = FOOD;
-	return (1);
+	return (0);
 }
 
 void

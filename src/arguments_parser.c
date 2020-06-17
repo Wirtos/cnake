@@ -31,6 +31,7 @@ init_arguments()
 	args->height = -1;
 	args->width = -1;
 	args->use_terminal_dimensions = 0;
+	args->permill_obstacles = -1;
 
 	return (args);
 }
@@ -50,6 +51,8 @@ display_help(char *executable)
 			"-t, --use-terminal-dimensions");
 	printf("\t%-*sSet height of the map\n", OPT_WIDTH, "-H, --height <height>");
 	printf("\t%-*sSet width of the map\n", OPT_WIDTH, "-W, --width <width>");
+	printf("\t%-*sSet permill of obstacles in the map\n", OPT_WIDTH,
+			"-o, --obstacles <permill>");
 	printf("\t%-*sDisplay this help\n", OPT_WIDTH, "-h, --help");
 }
 
@@ -63,10 +66,11 @@ parse_arguments(int argc, char *argv[])
 		{"use-terminal-dimensions", no_argument, NULL, 't'},
 		{"height", required_argument, NULL, 'H'},
 		{"width", required_argument, NULL, 'W'},
+		{"obstacles", required_argument, NULL, 'o'},
 		{"help", no_argument, NULL, 'h'},
 		{0, 0, 0, 0}
 	};
-	while ((op = getopt_long(argc, argv, ":tH:W:h", long_options, NULL)) != -1)
+	while ((op = getopt_long(argc, argv, ":tH:W:o:h", long_options, NULL)) != -1)
 	{
 		switch (op)
 		{
@@ -78,6 +82,9 @@ parse_arguments(int argc, char *argv[])
 				break;
 			case 'W':
 				args->width = atoi(optarg);
+				break;
+			case 'o':
+				args->permill_obstacles = atoi(optarg);
 				break;
 			case 'h':
 				display_help(argv[0]);
