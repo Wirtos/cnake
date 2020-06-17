@@ -6,7 +6,7 @@ This is a very basic Snake game in C with Ncurses.
 
 Command line arguments:
 ```
-Usage: snake [-t | -H HEIGHT -W WIDTH] [-h]
+Usage: ./snake [-t | -H HEIGHT -W WIDTH] [-o PERMILL] [-h]
 
 Snake Curses game
 
@@ -14,6 +14,7 @@ Options:
 	-t, --use-terminal-dimensions   Map dimensions following terminal size
 	-H, --height <height>           Set height of the map
 	-W, --width <width>             Set width of the map
+	-o, --obstacles <permill>       Set permill of obstacles in the map
 	-h, --help                      Display this help
 ```
 
@@ -32,4 +33,4 @@ on your system, `make install` will do it. Notice that you can set the
 variable `PREFIX` (default to /usr/local) to your desire.
 
 ### Uninstall
-`make uninstall` (Mind the PREFIX too)
+`make uninstall` (Mind the `PREFIX` too)

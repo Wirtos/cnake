@@ -44,7 +44,7 @@ display_help(char *executable)
 {
 	const int OPT_WIDTH = 32;
 
-	printf("Usage: %s [-t | -H HEIGHT -W WIDTH] [-h]\n", executable);
+	printf("Usage: %s [-t | -H HEIGHT -W WIDTH] [-o PERMILL] [-h]\n", executable);
 	puts("\nSnake Curses game");
 	puts("\nOptions:");
 	printf("\t%-*sMap dimensions following terminal size\n", OPT_WIDTH,
