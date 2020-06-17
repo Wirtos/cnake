@@ -109,7 +109,7 @@ draw_keys(WINDOW *w_keys)
 void
 redraw_game(WINDOW *w_game, field_t *field, direction_t direction)
 {
-	size_t i, j;
+	int i, j;
 
 	werase(w_game);
 
@@ -176,8 +176,8 @@ start()
 	WINDOW *w_score, *w_game, *w_keys;
 	field_t *field;
 	snake_t *snake;
-	unsigned int keep_mainloop = 1, score = 0;
-	size_t height_game, width_game;
+	unsigned int score = 0;
+	int keep_mainloop = 1, height_game, width_game;
 
 	set_curses_properties();
 

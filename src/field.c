@@ -18,10 +18,10 @@
 #include "field.h"
 
 field_t*
-init_field(size_t height, size_t width)
+init_field(int height, int width)
 {
 	field_t *field;
-	size_t i;
+	int i, j;
 
 	field = malloc(sizeof(field_t));
 	field->width = width;
@@ -31,7 +31,7 @@ init_field(size_t height, size_t width)
 	for (i = 0; i < height; i++)
 	{
 		field->matrix[i] = malloc(sizeof(cell_t) * width);
-		for (size_t j = 0; j < width; j++)
+		for (j = 0; j < width; j++)
 			field->matrix[i][j] = EMPTY;
 	}
 
@@ -58,7 +58,7 @@ int
 add_food(field_t *field)
 {
 	coord_t empty_cells[(field->width - 2) * (field->height - 2)][2];
-	size_t i, j, size = 0;
+	int i, j, size = 0;
 
 	/* Find all the EMPTY cells and store their coordinates in empty_cells */
 	for (i = 1; i <= field->height - 2; i++)
@@ -85,7 +85,7 @@ add_food(field_t *field)
 void
 delete_field(field_t *field)
 {
-	for (size_t i = 0; i < field->height; i++)
+	for (int i = 0; i < field->height; i++)
 		free(field->matrix[i]);
 	free(field->matrix);
 	free(field);
