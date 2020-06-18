@@ -19,14 +19,25 @@
 #define FIELD_H
 
 #include <stdlib.h>
+#include <time.h>
 
 typedef int coord_t;
-typedef enum {EMPTY, SNAKE, HEAD, FOOD, BORDER, OBSTACLE} cell_t;
+typedef enum {EMPTY, SNAKE, HEAD, FOOD, BORDER, OBSTACLE, SHORTENER} cell_t;
+
+typedef struct temp_item_s
+{
+	coord_t y, x;
+	time_t scheduled_destruction;
+	struct temp_item_s *next;
+} temp_item_t;
+
+typedef temp_item_t* temp_item_list_t;
 
 typedef struct
 {
 	int width, height;
 	cell_t **matrix;  /* [height][width] */
+	temp_item_list_t til;
 } field_t;
 
 
@@ -42,6 +53,19 @@ init_field(int height, int width, int permill_obstacles);
  */
 int
 add_food(field_t *field);
+
+/*
+ * Add a random cell with shortener into the matrix. Return 0 if there wasn't
+ * space for it. Return 1 in success
+ */
+int
+add_shortener(field_t *field, time_t duration);
+
+/*
+ * Take away expired items from the map
+ */
+void
+remove_expired_items(field_t *field);
 
 /*
  * Deallocate field

@@ -21,15 +21,28 @@
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-/* Some constants */
-
+/* Sizes */
+#define WIDTH_W_KEYS 28
 #define DEFAULT_W_GAME_HEIGHT 26
 #define DEFAULT_W_GAME_WIDTH 66
 #define DEFAULT_PERMILL_OBSTACLES 5
 
+/* Delays */
 #define DELAY 300 /* milliseconds */
+#define DURATION_SHORTENER 5  /* seconds */
 
+/* Points */
+#define POINTS_FOOD 10
+#define POINTS_SHORTENER 5
+
+/*
+ * Probabilities: 1/X chances of item appearing when eating a FOOD
+ */
+#define PROBABILITY_SHORTENER 10
+
+/* Color pairs */
 #define PAIR_DEFAULT 1
 #define PAIR_SCORE 2
 #define PAIR_BORDER 3
@@ -37,8 +50,7 @@
 #define PAIR_HEAD 5
 #define PAIR_FOOD 6
 #define PAIR_TITLE 7
-
-#define WIDTH_W_KEYS 28
+#define PAIR_SHORTENER 8
 
 /*
  * Prepares colors
@@ -56,6 +68,7 @@ set_curses_properties()
 	init_pair(PAIR_SNAKE, -1, COLOR_RED);
 	init_pair(PAIR_HEAD, COLOR_BLUE, COLOR_GREEN);
 	init_pair(PAIR_FOOD, COLOR_CYAN, -1);
+	init_pair(PAIR_SHORTENER, COLOR_BLUE, -1);
 	init_pair(PAIR_TITLE, COLOR_GREEN, COLOR_RED);
 
 	attrset(COLOR_PAIR(PAIR_DEFAULT));
@@ -146,6 +159,9 @@ redraw_game(WINDOW *w_game, field_t *field, direction_t direction)
 					break;
 				case OBSTACLE:
 					mvwaddch(w_game, i, j, 'x' | COLOR_PAIR(PAIR_BORDER));
+					break;
+				case SHORTENER:
+					mvwaddch(w_game, i, j, 's' | COLOR_PAIR(PAIR_SHORTENER));
 			}
 		}
 	}
@@ -205,6 +221,7 @@ start(int height_game, int width_game, int permill_obstacles)
 	/* Mainloop */
 	while (keep_mainloop)
 	{
+		remove_expired_items(field);
 		redraw_score(w_score, score);
 		redraw_game(w_game, field, snake->direction);
 		doupdate();
@@ -251,8 +268,13 @@ start(int height_game, int width_game, int permill_obstacles)
 				keep_mainloop = 0;
 				break;
 			case FOOD:
-				score += 10;
+				score += POINTS_FOOD;
 				add_food(field);
+				if (rand() % PROBABILITY_SHORTENER == 0)
+					add_shortener(field, DURATION_SHORTENER);
+				break;
+			case SHORTENER:
+				score += POINTS_SHORTENER;
 		}
 	}
 
@@ -322,6 +344,7 @@ main(int argc, char *argv[])
 	arguments_t *args = parse_arguments(argc, argv);
 	int height, width, permill_obstacles;
 
+	srand(time(NULL));
 	initscr();
 
 	timeout(DELAY);       /* Set timeout for keypresses */

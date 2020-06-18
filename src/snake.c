@@ -26,7 +26,6 @@ init_snake(field_t *field)
 	snake = malloc(sizeof(snake_t));
 
 	/* Random initial direction */
-	srand(time(NULL));
 	snake->direction = rand() % 4;
 
 	snake->tail = malloc(sizeof(body_t));
@@ -77,6 +76,32 @@ delete_tail(field_t *field, snake_t *snake)
 	snake->tail = aux;
 }
 
+/*
+ * Deletes the first half of snake body
+ */
+static void
+delete_half_snake(field_t *field, snake_t *snake)
+{
+	int snake_length = 0;
+	body_t *aux = snake->tail;
+
+	/* Measure snake lenght */
+	while (aux != snake->head)
+	{
+		snake_length++;
+		aux = aux->next;
+	}
+
+	for (int i = 0; i < snake_length/2; i++)
+	{
+		field->matrix[snake->tail->y][snake->tail->x] = EMPTY;
+
+		aux = snake->tail->next;
+		free(snake->tail);
+		snake->tail = aux;
+	}
+}
+
 cell_t
 advance(field_t *field, snake_t *snake)
 {
@@ -104,6 +129,9 @@ advance(field_t *field, snake_t *snake)
 
 	switch (old_type = field->matrix[next_y][next_x])
 	{
+		case SHORTENER:
+			delete_half_snake(field, snake);
+			__attribute__((fallthrough));  /* Hint for compiler */
 		case EMPTY:
 			append_head(field, snake, next_y, next_x);
 			delete_tail(field, snake);

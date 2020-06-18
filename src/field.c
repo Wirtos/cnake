@@ -18,6 +18,79 @@
 #include <field.h>
 
 /*
+ * Add an item to a temp_item_list_t
+ */
+static void
+add_temp_item(temp_item_list_t *til, coord_t y, coord_t x, time_t duration)
+{
+	temp_item_t *new_item = malloc(sizeof(temp_item_t));
+	temp_item_t *aux;
+
+	new_item->y = y;
+	new_item->x = x;
+	new_item->scheduled_destruction = time(NULL) + duration;
+	new_item->next = NULL;
+
+	if (*til)
+	{
+		aux = *til;
+		while (aux->next != NULL)
+			aux = aux->next;
+		aux->next = new_item;
+	}
+	else
+		*til = new_item;
+}
+
+/*
+ * Get (*y, *x) coordinates of an expired item. Set them to -1 if no
+ * expired items are available. It also deallocates the item from the til
+ */
+static void
+get_expired_item(temp_item_list_t *til, coord_t *y, coord_t *x)
+{
+	temp_item_t *curr, *prev;
+	time_t now;
+
+	*y = *x = -1;
+	if (*til)
+	{
+		now = time(NULL);
+		prev = NULL;
+		curr = *til;
+		while (curr)
+		{
+			if (now >= curr->scheduled_destruction)
+			{
+				*y = curr->y;
+				*x = curr->x;
+				if (prev)
+					prev->next = curr->next;
+				else
+					*til = curr->next;
+				free(curr);
+				break;
+			}
+			curr = curr->next;
+		}
+	}
+}
+
+/*
+ * Deallocates content of a temp_item_list_t
+ */
+static void
+delete_temp_item_list_content(temp_item_list_t til)
+{
+	if (til)
+	{
+		if (til->next)
+			delete_temp_item_list_content(til->next);
+		free(til);
+	}
+}
+
+/*
  * Stores in (*y, *x) the coordinate of a random empty cell. Returns 0 if
  * no empty cells are found
  */
@@ -74,9 +147,12 @@ init_field(int height, int width, int permill_obstacles)
 	int i, j, number_obstacles;
 
 	field = malloc(sizeof(field_t));
+
+	/* Size */
 	field->width = width;
 	field->height = height;
 
+	/* Matrix (map) */
 	field->matrix = malloc(sizeof(cell_t*) * height);
 	for (i = 0; i < height; i++)
 	{
@@ -85,26 +161,29 @@ init_field(int height, int width, int permill_obstacles)
 			field->matrix[i][j] = EMPTY;
 	}
 
-	/* North border */
+	/* North border placing */
 	for (i = 0; i < width; i++)
 		field->matrix[0][i] = BORDER;
 
-	/* South border */
+	/* South border placing */
 	for (i = 0; i < width; i++)
 		field->matrix[height - 1][i] = BORDER;
 
-	/* West border */
+	/* West border placing */
 	for (i = 0; i < height; i++)
 		field->matrix[i][0] = BORDER;
 
-	/* East border */
+	/* East border placing */
 	for (i = 0; i < height; i++)
 		field->matrix[i][width - 1] = BORDER;
 
-	/* Obstacles */
+	/* Obstacles placing */
 	number_obstacles = (height-2) * (width-2) * permill_obstacles / 1000;
 	for (i = 0; i < number_obstacles; i++)
 		add_obstacle(field);
+
+	/* List of temporal items */
+	field->til = NULL;
 
 	return (field);
 }
@@ -122,11 +201,44 @@ add_food(field_t *field)
 	return (0);
 }
 
+int
+add_shortener(field_t *field, time_t duration)
+{
+	coord_t y, x;
+
+	if (get_random_empty_cell(field, &y, &x))
+	{
+		field->matrix[y][x] = SHORTENER;
+		add_temp_item(&field->til, y, x, duration);
+		return (1);
+	}
+	return (0);
+}
+
+void
+remove_expired_items(field_t *field)
+{
+	coord_t y, x;
+	int keep = 1;
+
+	while (keep)
+	{
+		get_expired_item(&field->til, &y, &x);
+		if (y != -1 && x != -1)
+			field->matrix[y][x] = EMPTY;
+		else
+			keep = 0;
+	}
+}
+
 void
 delete_field(field_t *field)
 {
 	for (int i = 0; i < field->height; i++)
 		free(field->matrix[i]);
 	free(field->matrix);
+
+	delete_temp_item_list_content(field->til);
+
 	free(field);
 }
