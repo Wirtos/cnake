@@ -30,7 +30,9 @@
 #define DEFAULT_PERMILL_OBSTACLES 5
 
 /* Delays */
-#define DELAY 300 /* milliseconds */
+#define DEFAULT_STARTING_DELAY 300 /* milliseconds */
+#define DEFAULT_MINIMUM_DELAY 120
+#define DEFAULT_STEP_DELAY 5
 #define DURATION_SHORTENER 5  /* seconds */
 
 /* Points */
@@ -176,7 +178,7 @@ redraw_game(WINDOW *w_game, field_t *field, direction_t direction)
  * Pause game and display PAUSED banner in w_game
  */
 static void
-pause(WINDOW *w_game)
+pause(WINDOW *w_game, time_t delay)
 {
 	int max_y, max_x;
 
@@ -188,7 +190,7 @@ pause(WINDOW *w_game)
 
 	timeout(-1);  /* Take out timeout */
 	getch();
-	timeout(DELAY);  /* Restore timeout */
+	timeout(delay);  /* Restore timeout */
 }
 
 /*
@@ -200,7 +202,8 @@ start(int height_game, int width_game, int permill_obstacles)
 	WINDOW *w_score, *w_game, *w_keys;
 	field_t *field;
 	snake_t *snake;
-	unsigned int w_game_y, score = 0, keep_mainloop = 1;
+	unsigned int w_game_y, score, keep_mainloop;
+	time_t delay;
 
 	set_curses_properties();
 
@@ -222,6 +225,9 @@ start(int height_game, int width_game, int permill_obstacles)
 	draw_keys(w_keys);
 
 	/* Mainloop */
+	score = 0;
+	delay = DEFAULT_STARTING_DELAY;
+	keep_mainloop = 1;
 	while (keep_mainloop)
 	{
 		remove_expired_items(field);
@@ -253,7 +259,7 @@ start(int height_game, int width_game, int permill_obstacles)
 				snake->direction = EAST;
 				break;
 			case 'p':
-				pause(w_game);
+				pause(w_game, delay);
 				break;
 			case 'q':
 				keep_mainloop = 0;
@@ -271,8 +277,13 @@ start(int height_game, int width_game, int permill_obstacles)
 				keep_mainloop = 0;
 				break;
 			case FOOD:
-				score += POINTS_FOOD;
 				add_food(field);
+				score += POINTS_FOOD;
+				if (delay > DEFAULT_MINIMUM_DELAY)
+				{
+					delay -= DEFAULT_STEP_DELAY;
+					timeout(delay);
+				}
 				if (rand() % PROBABILITY_SHORTENER == 0)
 					add_shortener(field, DURATION_SHORTENER);
 				break;
@@ -350,7 +361,7 @@ main(int argc, char *argv[])
 	srand(time(NULL));
 	initscr();
 
-	timeout(DELAY);       /* Set timeout for keypresses */
+	timeout(DEFAULT_STARTING_DELAY);       /* Set timeout for keypresses */
 	cbreak();             /* Do not buffer keypresses */
 	noecho();             /* Do not show keypresses */
 	keypad(stdscr, TRUE); /* Enable special keys */
