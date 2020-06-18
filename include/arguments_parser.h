@@ -23,6 +23,7 @@ typedef struct arguments_s
 	int height, width;  /* Value -1 means no specified */
 	int use_terminal_dimensions;
 	int permill_obstacles;
+	int starting_delay, minimum_delay, step_delay;
 } arguments_t;
 
 /*

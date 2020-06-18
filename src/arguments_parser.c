@@ -32,6 +32,9 @@ init_arguments()
 	args->width = -1;
 	args->use_terminal_dimensions = 0;
 	args->permill_obstacles = -1;
+	args->starting_delay = -1;
+	args->minimum_delay = -1;
+	args->step_delay = -1;
 
 	return (args);
 }
@@ -44,16 +47,25 @@ display_help(char *executable)
 {
 	const int OPT_WIDTH = 32;
 
-	printf("Usage: %s [-t | -H HEIGHT -W WIDTH] [-o PERMILL] [-h]\n", executable);
+	printf("Usage: %s [OPTIONS]\n", executable);
 	puts("\nSnake Curses game");
-	puts("\nOptions:");
+	puts("\nSize:");
 	printf("\t%-*sMap dimensions following terminal size\n", OPT_WIDTH,
 			"-t, --use-terminal-dimensions");
+	puts("OR:");
 	printf("\t%-*sSet height of the map\n", OPT_WIDTH, "-H, --height <height>");
 	printf("\t%-*sSet width of the map\n", OPT_WIDTH, "-W, --width <width>");
+	puts("\nObstacles:");
 	printf("\t%-*sSet permill of obstacles in the map\n", OPT_WIDTH,
 			"-o, --obstacles <permill>");
-	printf("\t%-*sDisplay this help\n", OPT_WIDTH, "-h, --help");
+	puts("\nDelay:");
+	printf("\t%-*sSet starting delay in milliseconds\n", OPT_WIDTH,
+			"-s, --starting-delay <ms>");
+	printf("\t%-*sSet minumum delay in milliseconds\n", OPT_WIDTH,
+			"-m, --minimum-delay <ms>");
+	printf("\t%-*sSet reduction of delay in milliseconds when eating food\n",
+			OPT_WIDTH, "-S, --step-delay <ms>");
+	printf("\n\t%-*sDisplay this help\n", OPT_WIDTH, "-h, --help");
 }
 
 arguments_t*
@@ -67,10 +79,13 @@ parse_arguments(int argc, char *argv[])
 		{"height", required_argument, NULL, 'H'},
 		{"width", required_argument, NULL, 'W'},
 		{"obstacles", required_argument, NULL, 'o'},
+		{"starting-delay", required_argument, NULL, 's'},
+		{"minimum-delay", required_argument, NULL, 'm'},
+		{"step-delay", required_argument, NULL, 'S'},
 		{"help", no_argument, NULL, 'h'},
 		{0, 0, 0, 0}
 	};
-	while ((op = getopt_long(argc, argv, ":tH:W:o:h", long_options, NULL)) != -1)
+	while ((op = getopt_long(argc, argv, ":tH:W:o:s:m:S:h", long_options, NULL)) != -1)
 	{
 		switch (op)
 		{
@@ -85,6 +100,15 @@ parse_arguments(int argc, char *argv[])
 				break;
 			case 'o':
 				args->permill_obstacles = atoi(optarg);
+				break;
+			case 's':
+				args->starting_delay = atoi(optarg);
+				break;
+			case 'm':
+				args->minimum_delay = atoi(optarg);
+				break;
+			case 'S':
+				args->step_delay = atoi(optarg);
 				break;
 			case 'h':
 				display_help(argv[0]);

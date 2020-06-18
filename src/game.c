@@ -197,7 +197,8 @@ pause(WINDOW *w_game, time_t delay)
  * Initialize data structures and run game mainloop
  */
 static void
-start(int height_game, int width_game, int permill_obstacles)
+start(int height_game, int width_game, int permill_obstacles, int delay_starting,
+		int delay_minimum, int delay_step)
 {
 	WINDOW *w_score, *w_game, *w_keys;
 	field_t *field;
@@ -226,8 +227,9 @@ start(int height_game, int width_game, int permill_obstacles)
 
 	/* Mainloop */
 	score = 0;
-	delay = DEFAULT_STARTING_DELAY;
 	keep_mainloop = 1;
+	delay = delay_starting;
+	timeout(delay);
 	while (keep_mainloop)
 	{
 		remove_expired_items(field);
@@ -279,11 +281,15 @@ start(int height_game, int width_game, int permill_obstacles)
 			case FOOD:
 				add_food(field);
 				score += POINTS_FOOD;
-				if (delay > DEFAULT_MINIMUM_DELAY)
-				{
-					delay -= DEFAULT_STEP_DELAY;
-					timeout(delay);
-				}
+
+				/* Delay reduction */
+				if (delay > delay_minimum)
+					delay -= delay_step;
+				else
+					delay = delay_minimum;
+				timeout(delay);
+
+				/* Items generation */
 				if (rand() % PROBABILITY_SHORTENER == 0)
 					add_shortener(field, DURATION_SHORTENER);
 				break;
@@ -352,16 +358,39 @@ get_permill_obstacles(arguments_t *args, int *permill_obstacles)
 		*permill_obstacles = args->permill_obstacles;
 }
 
+/*
+ * Extract delay settings from args. If it is unspeficied, set the
+ * default value.
+ */
+static void
+get_delay_options(arguments_t *args, int *starting, int *minimum, int *step)
+{
+	if (args->starting_delay == -1)
+		*starting = DEFAULT_STARTING_DELAY;
+	else
+		*starting = args->starting_delay;
+
+	if (args->minimum_delay == -1)
+		*minimum = DEFAULT_MINIMUM_DELAY;
+	else
+		*minimum = args->minimum_delay;
+
+	if (args->step_delay == -1)
+		*step = DEFAULT_STEP_DELAY;
+	else
+		*step = args->step_delay;
+}
+
 int
 main(int argc, char *argv[])
 {
 	arguments_t *args = parse_arguments(argc, argv);
 	int height, width, permill_obstacles;
+	int delay_starting, delay_minimum, delay_step;
 
 	srand(time(NULL));
 	initscr();
 
-	timeout(DEFAULT_STARTING_DELAY);       /* Set timeout for keypresses */
 	cbreak();             /* Do not buffer keypresses */
 	noecho();             /* Do not show keypresses */
 	keypad(stdscr, TRUE); /* Enable special keys */
@@ -369,9 +398,11 @@ main(int argc, char *argv[])
 
 	get_map_dimensions(args, &height, &width);
 	get_permill_obstacles(args, &permill_obstacles);
+	get_delay_options(args, &delay_starting, &delay_minimum, &delay_step);
 	delete_arguments(args);
 
-	start(height, width, permill_obstacles);
+	start(height, width, permill_obstacles, delay_starting, delay_minimum,
+			delay_step);
 
 	return (0);
 }
