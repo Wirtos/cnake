@@ -43,14 +43,17 @@
 #define PROBABILITY_SHORTENER 10
 
 /* Color pairs */
-#define PAIR_DEFAULT 1
-#define PAIR_SCORE 2
-#define PAIR_BORDER 3
-#define PAIR_SNAKE 4
-#define PAIR_HEAD 5
-#define PAIR_FOOD 6
-#define PAIR_TITLE 7
-#define PAIR_SHORTENER 8
+enum
+{
+	PAIR_DEFAULT,
+	PAIR_SCORE,
+	PAIR_BORDER,
+	PAIR_SNAKE,
+	PAIR_HEAD,
+	PAIR_FOOD,
+	PAIR_SHORTENER,
+	PAIR_TITLE,
+};
 
 /*
  * Prepares colors
