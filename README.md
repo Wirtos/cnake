@@ -28,7 +28,7 @@ Obstacles:
 Delay:
 	-s, --starting-delay <ms>       Set starting delay in milliseconds (Def: 300)
 	-m, --minimum-delay <ms>        Set minumum delay in milliseconds (Def: 120)
-	-S, --step-delay <ms>           Set reduction of delay in milliseconds when eating food(Def: 10)
+	-S, --step-delay <ms>           Set reduction of delay in milliseconds when eating food (Def: 10)
 
 	-h, --help                      Display this help
 ```

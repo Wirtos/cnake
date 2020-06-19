@@ -66,7 +66,7 @@ display_help(char *executable)
 			"-s, --starting-delay <ms>", DEFAULT_STARTING_DELAY);
 	printf("\t%-*sSet minumum delay in milliseconds (Def: %d)\n", OPT_WIDTH,
 			"-m, --minimum-delay <ms>", DEFAULT_MINIMUM_DELAY);
-	printf("\t%-*sSet reduction of delay in milliseconds when eating food(Def: %d)\n",
+	printf("\t%-*sSet reduction of delay in milliseconds when eating food (Def: %d)\n",
 			OPT_WIDTH, "-S, --step-delay <ms>", DEFAULT_STEP_DELAY);
 	printf("\n\t%-*sDisplay this help\n", OPT_WIDTH, "-h, --help");
 }
