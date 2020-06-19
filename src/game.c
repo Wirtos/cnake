@@ -348,7 +348,7 @@ start(arguments_t *args)
 		}
 
 		/* Move the snake */
-		for (int i = 0; i <= 1; i++)
+		for (int i = 0; i <= 1 && keep_mainloop; i++)
 		{
 			if (i == 0) /* Player turn */
 			{
@@ -411,17 +411,28 @@ start(arguments_t *args)
 		}
 	}
 
-	/* Free the memory */
-	delete_snake(snake);
-	if (args->two_players)
-		delete_snake(snake2);
-	delete_field(field);
+	/* Kill Ncurses */
 	delwin(w_score);
 	delwin(w_game);
 	delwin(w_keys);
 	endwin();
 
-	printf("Your score: %u\n", score);
+	if (args->two_players)
+	{
+		printf("Player %d died first\n", snakex == snake ? 1 : 2);
+		puts("====================");
+		printf("Player 1 score: %u\n", score);
+		printf("Player 2 score: %u\n", score2);
+	}
+	else
+		printf("Your score: %u\n", score);
+
+	/* Free the memory */
+	delete_snake(snake);
+	if (args->two_players)
+		delete_snake(snake2);
+	delete_field(field);
+
 }
 
 /*
