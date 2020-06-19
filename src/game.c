@@ -197,8 +197,7 @@ pause(WINDOW *w_game, time_t delay)
  * Initialize data structures and run game mainloop
  */
 static void
-start(int height_game, int width_game, int permill_obstacles, int delay_starting,
-		int delay_minimum, int delay_step)
+start(arguments_t *args)
 {
 	WINDOW *w_score, *w_game, *w_keys;
 	field_t *field;
@@ -214,12 +213,12 @@ start(int height_game, int width_game, int permill_obstacles, int delay_starting
 	attroff(COLOR_PAIR(PAIR_TITLE) | A_BOLD);
 	wnoutrefresh(stdscr);
 
-	w_game_y = (LINES+3)/2 - height_game/2;  /* Starting line of w_game */
+	w_game_y = (LINES+3)/2 - args->height/2;  /* Starting line of w_game */
 	w_score = newwin(1, COLS - WIDTH_W_KEYS - 4, w_game_y - 1, 1);
-	w_game = newwin(height_game, width_game, w_game_y, 1);
+	w_game = newwin(args->height, args->width, w_game_y, 1);
 	w_keys = newwin(11, WIDTH_W_KEYS, LINES/2 - 5, COLS - WIDTH_W_KEYS - 1);
 
-	field = init_field(height_game, width_game, permill_obstacles);
+	field = init_field(args->height, args->width, args->permill_obstacles);
 	snake = init_snake(field);
 	add_food(field);
 
@@ -228,7 +227,7 @@ start(int height_game, int width_game, int permill_obstacles, int delay_starting
 	/* Mainloop */
 	score = 0;
 	keep_mainloop = 1;
-	delay = delay_starting;
+	delay = args->starting_delay;
 	timeout(delay);
 	while (keep_mainloop)
 	{
@@ -283,10 +282,10 @@ start(int height_game, int width_game, int permill_obstacles, int delay_starting
 				score += POINTS_FOOD;
 
 				/* Delay reduction */
-				if (delay > delay_minimum)
-					delay -= delay_step;
+				if (delay > args->minimum_delay)
+					delay -= args->step_delay;
 				else
-					delay = delay_minimum;
+					delay = args->minimum_delay;
 				timeout(delay);
 
 				/* Items generation */
@@ -310,83 +309,61 @@ start(int height_game, int width_game, int permill_obstacles, int delay_starting
 }
 
 /*
- * Extract height and width from args. If they are unspeficied, set the
- * default values. Also checks them against terminal size.
+ * Set default values in unspecified options. Also checks terminal size.
  * NEEDS INITIALIZED NCURSES
  */
 static void
-get_map_dimensions(arguments_t *args, int *height, int *width)
+set_default_options(arguments_t *args)
 {
+	/* Size settings */
 	if (args->use_terminal_dimensions)
 	{
-		*height = LINES - 4;
-		*width = COLS - WIDTH_W_KEYS - 3;
+		args->height = LINES - 4;
+		args->width = COLS - WIDTH_W_KEYS - 3;
 	}
 	else
 	{
-		*height = args->height == -1 ? DEFAULT_W_GAME_HEIGHT : args->height;
-		*width = args->width == -1 ? DEFAULT_W_GAME_WIDTH : args->width;
+		if (args->height == -1)
+			args->height = DEFAULT_W_GAME_HEIGHT;
+		if (args->width == -1)
+			args->width = DEFAULT_W_GAME_WIDTH;
 	}
 
 	/* Check terminal size */
-	if (*height + 3 > LINES)
+	if (args->height + 3 > LINES)
 	{
 		endwin();
 		delete_arguments(args);
 		fputs("Terminal height too small\n", stderr);
 		exit(1);
 	}
-	if (*width + WIDTH_W_KEYS + 3 > COLS)
+	if (args->width + WIDTH_W_KEYS + 3 > COLS)
 	{
 		endwin();
 		delete_arguments(args);
 		fputs("Terminal width too small\n", stderr);
 		exit(1);
 	}
-}
 
-/*
- * Extract permill of obstacles from args. If it is unspeficied, set the
- * default value.
- */
-static void
-get_permill_obstacles(arguments_t *args, int *permill_obstacles)
-{
+	/* Obstacles settings */
 	if (args->permill_obstacles == -1)
-		*permill_obstacles = DEFAULT_PERMILL_OBSTACLES;
-	else
-		*permill_obstacles = args->permill_obstacles;
-}
+		args->permill_obstacles = DEFAULT_PERMILL_OBSTACLES;
 
-/*
- * Extract delay settings from args. If it is unspeficied, set the
- * default value.
- */
-static void
-get_delay_options(arguments_t *args, int *starting, int *minimum, int *step)
-{
+	/* Delay settings */
 	if (args->starting_delay == -1)
-		*starting = DEFAULT_STARTING_DELAY;
-	else
-		*starting = args->starting_delay;
+		args->starting_delay = DEFAULT_STARTING_DELAY;
 
 	if (args->minimum_delay == -1)
-		*minimum = DEFAULT_MINIMUM_DELAY;
-	else
-		*minimum = args->minimum_delay;
+		args->minimum_delay = DEFAULT_MINIMUM_DELAY;
 
 	if (args->step_delay == -1)
-		*step = DEFAULT_STEP_DELAY;
-	else
-		*step = args->step_delay;
+		args->step_delay = DEFAULT_STEP_DELAY;
 }
 
 int
 main(int argc, char *argv[])
 {
 	arguments_t *args = parse_arguments(argc, argv);
-	int height, width, permill_obstacles;
-	int delay_starting, delay_minimum, delay_step;
 
 	srand(time(NULL));
 	initscr();
@@ -396,13 +373,9 @@ main(int argc, char *argv[])
 	keypad(stdscr, TRUE); /* Enable special keys */
 	curs_set(0);          /* Hide cursor */
 
-	get_map_dimensions(args, &height, &width);
-	get_permill_obstacles(args, &permill_obstacles);
-	get_delay_options(args, &delay_starting, &delay_minimum, &delay_step);
+	set_default_options(args);
+	start(args);
 	delete_arguments(args);
-
-	start(height, width, permill_obstacles, delay_starting, delay_minimum,
-			delay_step);
 
 	return (0);
 }
