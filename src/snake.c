@@ -19,7 +19,7 @@
 #include <time.h>
 
 snake_t*
-init_snake(field_t *field)
+init_snake(field_t *field, cell_t head_type)
 {
 	snake_t *snake;
 
@@ -35,7 +35,9 @@ init_snake(field_t *field)
 	snake->tail->next = NULL;
 	snake->head = snake->tail;
 
-	field->matrix[snake->head->y][snake->head->x] = HEAD;
+	/* Head */
+	snake->head_type = head_type;
+	field->matrix[snake->head->y][snake->head->x] = head_type;
 
 	return (snake);
 }
@@ -49,7 +51,7 @@ append_head(field_t *field, snake_t *snake, coord_t y, coord_t x)
 {
 	/* In the field */
 	field->matrix[snake->head->y][snake->head->x] = SNAKE;
-	field->matrix[y][x] = HEAD;
+	field->matrix[y][x] = snake->head_type;
 
 	/* In the snake */
 	snake->head->next = malloc(sizeof(body_t));
@@ -144,6 +146,7 @@ advance(field_t *field, snake_t *snake)
 		case BORDER:
 		case SNAKE:
 		case HEAD:
+		case HEAD2:
 		case OBSTACLE:
 			break;  /* Is ded so nothing to do */
 	}

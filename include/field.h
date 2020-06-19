@@ -27,6 +27,7 @@ typedef enum
 	EMPTY,
 	SNAKE,
 	HEAD,
+	HEAD2,
 	FOOD,
 	BORDER,
 	OBSTACLE,

@@ -24,6 +24,7 @@ typedef struct arguments_s
 	int use_terminal_dimensions;
 	int permill_obstacles;
 	int starting_delay, minimum_delay, step_delay;
+	int two_players;
 } arguments_t;
 
 /*
