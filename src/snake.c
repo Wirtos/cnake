@@ -33,6 +33,7 @@ init_snake(field_t *field, cell_t head_type)
 	snake->tail->y = (rand() % (field->height - 4)) + 2;
 	snake->tail->x = (rand() % (field->width - 4)) + 2;
 	snake->tail->next = NULL;
+	snake->neck = snake->tail;
 	snake->head = snake->tail;
 
 	/* Head */
@@ -58,6 +59,7 @@ append_head(field_t *field, snake_t *snake, coord_t y, coord_t x)
 	snake->head->next->y = y;
 	snake->head->next->x = x;
 	snake->head->next->next = NULL;
+	snake->neck = snake->head;
 	snake->head = snake->head->next;
 }
 
@@ -104,6 +106,28 @@ delete_half_snake(field_t *field, snake_t *snake)
 	}
 }
 
+/*
+ * Sets the snake's direction to the opposite of the current one
+ */
+static void
+reverse_direction(snake_t *snake)
+{
+	switch (snake->direction)
+	{
+		case NORTH:
+			snake->direction = SOUTH;
+			break;
+		case EAST:
+			snake->direction = WEST;
+			break;
+		case WEST:
+			snake->direction = EAST;
+			break;
+		case SOUTH:
+			snake->direction = NORTH;
+	}
+}
+
 cell_t
 advance(field_t *field, snake_t *snake)
 {
@@ -143,8 +167,18 @@ advance(field_t *field, snake_t *snake)
 		case FOOD:
 			append_head(field, snake, next_y, next_x);
 			break;
-		case BORDER:
 		case SNAKE:
+			/*
+			 * Treat neck as empty cell and reverse direction so the snake
+			 * doesn't die if it tries to go against it
+			 */
+			if (next_y == snake->neck->y && next_x == snake->neck->x)
+			{
+				old_type = EMPTY;
+				reverse_direction(snake);
+			}
+			break;
+		case BORDER:
 		case HEAD:
 		case HEAD2:
 		case OBSTACLE:
