@@ -41,6 +41,7 @@ set_curses_properties()
 	init_pair(PAIR_HEAD, COLOR_BLUE, COLOR_GREEN);
 	init_pair(PAIR_FOOD, COLOR_CYAN, -1);
 	init_pair(PAIR_SHORTENER, COLOR_BLUE, -1);
+	init_pair(PAIR_DECELERATOR, COLOR_GREEN, -1);
 	init_pair(PAIR_TITLE, COLOR_GREEN, COLOR_RED);
 
 	attrset(COLOR_PAIR(PAIR_DEFAULT));
@@ -134,6 +135,10 @@ redraw_game(WINDOW *w_game, field_t *field, direction_t direction)
 					break;
 				case SHORTENER:
 					mvwaddch(w_game, i, j, 's' | COLOR_PAIR(PAIR_SHORTENER));
+					break;
+				case DECELERATOR:
+					mvwaddch(w_game, i, j, 'd' | COLOR_PAIR(PAIR_DECELERATOR));
+					break;
 			}
 		}
 	}
@@ -257,10 +262,18 @@ start(arguments_t *args)
 
 				/* Items generation */
 				if (rand() % PROBABILITY_SHORTENER == 0)
-					add_shortener(field, DURATION_SHORTENER);
+					add_temp_item(field, SHORTENER, DURATION_SHORTENER);
+				if (rand() % PROBABILITY_DECELERATOR == 0)
+					add_temp_item(field, DECELERATOR, DURATION_DECELERATOR);
 				break;
 			case SHORTENER:
 				score += POINTS_SHORTENER;
+				break;
+			case DECELERATOR:
+				score += POINTS_DECELERATOR;
+				delay = args->starting_delay;
+				timeout(delay);
+				break;
 		}
 	}
 

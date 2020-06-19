@@ -29,22 +29,27 @@
 #define DEFAULT_W_GAME_WIDTH 66
 
 /* Obstacles */
-#define DEFAULT_PERMILL_OBSTACLES 5
+#define DEFAULT_PERMILL_OBSTACLES 10
 
 /* Delays */
-#define DEFAULT_STARTING_DELAY 300 /* milliseconds */
+/* milliseconds */
+#define DEFAULT_STARTING_DELAY 300
 #define DEFAULT_MINIMUM_DELAY 120
-#define DEFAULT_STEP_DELAY 5
-#define DURATION_SHORTENER 5  /* seconds */
+#define DEFAULT_STEP_DELAY 10
+/* seconds */
+#define DURATION_SHORTENER 5
+#define DURATION_DECELERATOR 7
 
 /* Points */
 #define POINTS_FOOD 10
-#define POINTS_SHORTENER 5
+#define POINTS_SHORTENER 15
+#define POINTS_DECELERATOR 5
 
 /*
  * Probabilities: 1/X chances of item appearing when eating a FOOD
  */
-#define PROBABILITY_SHORTENER 10
+#define PROBABILITY_SHORTENER 15
+#define PROBABILITY_DECELERATOR 10
 
 /* Color pairs */
 enum
@@ -56,6 +61,7 @@ enum
 	PAIR_HEAD,
 	PAIR_FOOD,
 	PAIR_SHORTENER,
+	PAIR_DECELERATOR,
 	PAIR_TITLE,
 };
 

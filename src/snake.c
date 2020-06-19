@@ -132,6 +132,7 @@ advance(field_t *field, snake_t *snake)
 		case SHORTENER:
 			delete_half_snake(field, snake);
 			__attribute__((fallthrough));  /* Hint for compiler */
+		case DECELERATOR:
 		case EMPTY:
 			append_head(field, snake, next_y, next_x);
 			delete_tail(field, snake);

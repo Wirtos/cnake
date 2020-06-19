@@ -22,7 +22,17 @@
 #include <time.h>
 
 typedef int coord_t;
-typedef enum {EMPTY, SNAKE, HEAD, FOOD, BORDER, OBSTACLE, SHORTENER} cell_t;
+typedef enum
+{
+	EMPTY,
+	SNAKE,
+	HEAD,
+	FOOD,
+	BORDER,
+	OBSTACLE,
+	SHORTENER,
+	DECELERATOR,
+} cell_t;
 
 typedef struct temp_item_s
 {
@@ -55,11 +65,11 @@ int
 add_food(field_t *field);
 
 /*
- * Add a random cell with shortener into the matrix. Return 0 if there wasn't
+ * Add a random cell with "type" into the matrix. Return 0 if there wasn't
  * space for it. Return 1 in success
  */
 int
-add_shortener(field_t *field, time_t duration);
+add_temp_item(field_t *field, cell_t type, time_t duration);
 
 /*
  * Take away expired items from the map

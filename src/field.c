@@ -21,7 +21,7 @@
  * Add an item to a temp_item_list_t
  */
 static void
-add_temp_item(temp_item_list_t *til, coord_t y, coord_t x, time_t duration)
+_add_temp_item(temp_item_list_t *til, coord_t y, coord_t x, time_t duration)
 {
 	temp_item_t *new_item = malloc(sizeof(temp_item_t));
 	temp_item_t *aux;
@@ -202,14 +202,14 @@ add_food(field_t *field)
 }
 
 int
-add_shortener(field_t *field, time_t duration)
+add_temp_item(field_t *field, cell_t type, time_t duration)
 {
 	coord_t y, x;
 
 	if (get_random_empty_cell(field, &y, &x))
 	{
-		field->matrix[y][x] = SHORTENER;
-		add_temp_item(&field->til, y, x, duration);
+		field->matrix[y][x] = type;
+		_add_temp_item(&field->til, y, x, duration);
 		return (1);
 	}
 	return (0);
