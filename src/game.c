@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <config.h>
 #include <field.h>
 #include <snake.h>
 #include <arguments_parser.h>
@@ -22,40 +23,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
-/* Sizes */
-#define WIDTH_W_KEYS 28
-#define DEFAULT_W_GAME_HEIGHT 26
-#define DEFAULT_W_GAME_WIDTH 66
-#define DEFAULT_PERMILL_OBSTACLES 5
-
-/* Delays */
-#define DEFAULT_STARTING_DELAY 300 /* milliseconds */
-#define DEFAULT_MINIMUM_DELAY 120
-#define DEFAULT_STEP_DELAY 5
-#define DURATION_SHORTENER 5  /* seconds */
-
-/* Points */
-#define POINTS_FOOD 10
-#define POINTS_SHORTENER 5
-
-/*
- * Probabilities: 1/X chances of item appearing when eating a FOOD
- */
-#define PROBABILITY_SHORTENER 10
-
-/* Color pairs */
-enum
-{
-	PAIR_DEFAULT,
-	PAIR_SCORE,
-	PAIR_BORDER,
-	PAIR_SNAKE,
-	PAIR_HEAD,
-	PAIR_FOOD,
-	PAIR_SHORTENER,
-	PAIR_TITLE,
-};
 
 /*
  * Prepares colors
