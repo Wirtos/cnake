@@ -32,6 +32,7 @@ typedef enum
 	OBSTACLE,
 	SHORTENER,
 	DECELERATOR,
+	EXTRA_POINTS,
 } cell_t;
 
 typedef struct temp_item_s

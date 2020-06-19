@@ -39,17 +39,20 @@
 /* seconds */
 #define DURATION_SHORTENER 5
 #define DURATION_DECELERATOR 7
+#define DURATION_EXTRA_POINTS 5
 
 /* Points */
 #define POINTS_FOOD 10
 #define POINTS_SHORTENER 15
 #define POINTS_DECELERATOR 5
+#define POINTS_EXTRA_POINTS 50
 
 /*
  * Probabilities: 1/X chances of item appearing when eating a FOOD
  */
 #define PROBABILITY_SHORTENER 15
 #define PROBABILITY_DECELERATOR 10
+#define PROBABILITY_EXTRA_POINTS 15
 
 /* Color pairs */
 enum
@@ -62,6 +65,7 @@ enum
 	PAIR_FOOD,
 	PAIR_SHORTENER,
 	PAIR_DECELERATOR,
+	PAIR_EXTRA_POINTS,
 	PAIR_TITLE,
 };
 

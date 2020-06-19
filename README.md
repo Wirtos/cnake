@@ -9,6 +9,7 @@ This are the items you will find in the map:
 - **f**: Food. It will increase by one your size and give you points
 - **d**: Decelerator. As you go eating food, your base speed will start increasing, eat these ones to get back to the starting speed. Beware that they will disappear if you don't take them fast
 - **s**: Shortener. Taking one of these will cut by half the size of the snake. Like the decelerators, also have a limited amount of time in the map
+- **e**: Extra points. Gives a bonus of points, limited duration
 
 You can customize some of the default settings with the command line arguments:
 ```
