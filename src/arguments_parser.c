@@ -16,6 +16,7 @@
  */
 
 #include <arguments_parser.h>
+#include <config.h>
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -53,18 +54,20 @@ display_help(char *executable)
 	printf("\t%-*sMap dimensions following terminal size\n", OPT_WIDTH,
 			"-t, --use-terminal-dimensions");
 	puts("OR:");
-	printf("\t%-*sSet height of the map\n", OPT_WIDTH, "-H, --height <height>");
-	printf("\t%-*sSet width of the map\n", OPT_WIDTH, "-W, --width <width>");
+	printf("\t%-*sSet height of the map (Def: %d)\n", OPT_WIDTH,
+			"-H, --height <height>", DEFAULT_W_GAME_HEIGHT);
+	printf("\t%-*sSet width of the map (Def: %d)\n", OPT_WIDTH,
+			"-W, --width <width>", DEFAULT_W_GAME_WIDTH);
 	puts("\nObstacles:");
-	printf("\t%-*sSet permill of obstacles in the map\n", OPT_WIDTH,
-			"-o, --obstacles <permill>");
+	printf("\t%-*sSet permill of obstacles in the map (Def: %d)\n", OPT_WIDTH,
+			"-o, --obstacles <permill>", DEFAULT_PERMILL_OBSTACLES);
 	puts("\nDelay:");
-	printf("\t%-*sSet starting delay in milliseconds\n", OPT_WIDTH,
-			"-s, --starting-delay <ms>");
-	printf("\t%-*sSet minumum delay in milliseconds\n", OPT_WIDTH,
-			"-m, --minimum-delay <ms>");
-	printf("\t%-*sSet reduction of delay in milliseconds when eating food\n",
-			OPT_WIDTH, "-S, --step-delay <ms>");
+	printf("\t%-*sSet starting delay in milliseconds (Def: %d)\n", OPT_WIDTH,
+			"-s, --starting-delay <ms>", DEFAULT_STARTING_DELAY);
+	printf("\t%-*sSet minumum delay in milliseconds (Def: %d)\n", OPT_WIDTH,
+			"-m, --minimum-delay <ms>", DEFAULT_MINIMUM_DELAY);
+	printf("\t%-*sSet reduction of delay in milliseconds when eating food(Def: %d)\n",
+			OPT_WIDTH, "-S, --step-delay <ms>", DEFAULT_STEP_DELAY);
 	printf("\n\t%-*sDisplay this help\n", OPT_WIDTH, "-h, --help");
 }
 
