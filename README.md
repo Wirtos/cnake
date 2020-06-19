@@ -2,19 +2,34 @@
 
 ![Snake Curses](screenshot.png)
 
-This is a very basic Snake game in C with Ncurses.
+This is a basic Snake game in C with Ncurses. Raise the score eating food without hitting the wall, obstacles or yourself.
+This are the items you will find in the map:
 
-Command line arguments:
+- **x**: Obstacle. As with the borders, your snake dies if you hit them
+- **f**: Food. It will increase by one your size and give you points
+- **d**: Decelerator. As you go eating food, your base speed will start increasing, eat these ones to get back to the starting speed. Beware that they will disappear if you don't take them fast
+- **s**: Shortener. Taking one of these will cut by half the size of the snake. Like the decelerators, also have a limited amount of time in the map
+
+You can customize some of the default settings with the command line arguments:
 ```
-Usage: ./snake [-t | -H HEIGHT -W WIDTH] [-o PERMILL] [-h]
+Usage: snake [OPTIONS]
 
 Snake Curses game
 
-Options:
+Size:
 	-t, --use-terminal-dimensions   Map dimensions following terminal size
-	-H, --height <height>           Set height of the map
-	-W, --width <width>             Set width of the map
-	-o, --obstacles <permill>       Set permill of obstacles in the map
+OR:
+	-H, --height <height>           Set height of the map (Def: 26)
+	-W, --width <width>             Set width of the map (Def: 66)
+
+Obstacles:
+	-o, --obstacles <permill>       Set permill of obstacles in the map (Def: 10)
+
+Delay:
+	-s, --starting-delay <ms>       Set starting delay in milliseconds (Def: 300)
+	-m, --minimum-delay <ms>        Set minumum delay in milliseconds (Def: 120)
+	-S, --step-delay <ms>           Set reduction of delay in milliseconds when eating food(Def: 10)
+
 	-h, --help                      Display this help
 ```
 
