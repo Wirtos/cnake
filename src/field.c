@@ -97,7 +97,8 @@ delete_temp_item_list_content(temp_item_list_t til)
 static int
 get_random_empty_cell(field_t *field, coord_t *y, coord_t *x)
 {
-	coord_t empty_cells[(field->width - 2) * (field->height - 2)][2]; int i, j, size = 0;
+	coord_t empty_cells[(field->width - 2) * (field->height - 2)][2];
+	int i, j, size = 0;
 
 	/* Find all the EMPTY cells and store their coordinates in empty_cells */
 	for (i = 1; i <= field->height - 2; i++)

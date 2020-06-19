@@ -135,7 +135,7 @@ parse_arguments(int argc, char *argv[])
 			(args->height != -1 || args->width != -1))
 	{
 		fputs("--use-terminal-dimensions incompatible with ", stderr);
-		fputs("--with and --height arguments\n", stderr);
+		fputs("--width and --height arguments\n", stderr);
 		delete_arguments(args);
 		exit(1);
 	}
