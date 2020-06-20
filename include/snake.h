@@ -32,7 +32,8 @@ typedef struct body_s
 typedef struct snake_s
 {
 	direction_t direction;
-	body_t *tail, *head;
+	body_t *tail, *neck, *head;
+	cell_t head_type;
 } snake_t;
 
 
@@ -40,7 +41,7 @@ typedef struct snake_s
  * Initialize snake and place it in the field
  */
 snake_t*
-init_snake(field_t *field);
+init_snake(field_t *field, cell_t head_type);
 
 /*
  * Make the snake advance one cell in the field, return type of

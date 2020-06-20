@@ -19,7 +19,7 @@
 #include <time.h>
 
 snake_t*
-init_snake(field_t *field)
+init_snake(field_t *field, cell_t head_type)
 {
 	snake_t *snake;
 
@@ -33,9 +33,12 @@ init_snake(field_t *field)
 	snake->tail->y = (rand() % (field->height - 4)) + 2;
 	snake->tail->x = (rand() % (field->width - 4)) + 2;
 	snake->tail->next = NULL;
+	snake->neck = snake->tail;
 	snake->head = snake->tail;
 
-	field->matrix[snake->head->y][snake->head->x] = HEAD;
+	/* Head */
+	snake->head_type = head_type;
+	field->matrix[snake->head->y][snake->head->x] = head_type;
 
 	return (snake);
 }
@@ -49,13 +52,14 @@ append_head(field_t *field, snake_t *snake, coord_t y, coord_t x)
 {
 	/* In the field */
 	field->matrix[snake->head->y][snake->head->x] = SNAKE;
-	field->matrix[y][x] = HEAD;
+	field->matrix[y][x] = snake->head_type;
 
 	/* In the snake */
 	snake->head->next = malloc(sizeof(body_t));
 	snake->head->next->y = y;
 	snake->head->next->x = x;
 	snake->head->next->next = NULL;
+	snake->neck = snake->head;
 	snake->head = snake->head->next;
 }
 
@@ -102,6 +106,28 @@ delete_half_snake(field_t *field, snake_t *snake)
 	}
 }
 
+/*
+ * Sets the snake's direction to the opposite of the current one
+ */
+static void
+reverse_direction(snake_t *snake)
+{
+	switch (snake->direction)
+	{
+		case NORTH:
+			snake->direction = SOUTH;
+			break;
+		case EAST:
+			snake->direction = WEST;
+			break;
+		case WEST:
+			snake->direction = EAST;
+			break;
+		case SOUTH:
+			snake->direction = NORTH;
+	}
+}
+
 cell_t
 advance(field_t *field, snake_t *snake)
 {
@@ -141,9 +167,20 @@ advance(field_t *field, snake_t *snake)
 		case FOOD:
 			append_head(field, snake, next_y, next_x);
 			break;
-		case BORDER:
 		case SNAKE:
+			/*
+			 * Reverse direction and advance again if hitting the neck so
+			 * the snake doesn't die if it tries to go against it
+			 */
+			if (next_y == snake->neck->y && next_x == snake->neck->x)
+			{
+				reverse_direction(snake);
+				old_type = advance(field, snake);
+			}
+			break;
+		case BORDER:
 		case HEAD:
+		case HEAD2:
 		case OBSTACLE:
 			break;  /* Is ded so nothing to do */
 	}

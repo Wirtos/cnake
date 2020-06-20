@@ -39,6 +39,9 @@ set_curses_properties()
 	init_pair(PAIR_BORDER, COLOR_MAGENTA, -1);
 	init_pair(PAIR_SNAKE, -1, COLOR_RED);
 	init_pair(PAIR_HEAD, COLOR_BLUE, COLOR_GREEN);
+	init_pair(PAIR_HEAD2, COLOR_BLACK, COLOR_CYAN);
+	init_pair(PAIR_PLAYER, COLOR_GREEN, -1);
+	init_pair(PAIR_PLAYER2, COLOR_CYAN, -1);
 	init_pair(PAIR_FOOD, COLOR_CYAN, -1);
 	init_pair(PAIR_SHORTENER, COLOR_BLUE, -1);
 	init_pair(PAIR_DECELERATOR, COLOR_GREEN, -1);
@@ -49,18 +52,39 @@ set_curses_properties()
 }
 
 /*
- * Updates score marker
+ * Updates score marker. Display in two players mode if score2 is not NULL
  */
 static void
-redraw_score(WINDOW *w_score, unsigned int score)
+redraw_score(WINDOW *w_score, unsigned int score, unsigned int *score2)
 {
-	mvwaddstr(w_score, 0, 0, "Score: ");
+	if (score2)
+	{
+		mvwaddstr(w_score, 0, 0, "Scores | ");
+		wattron(w_score, COLOR_PAIR(PAIR_PLAYER));
+		waddstr(w_score, "Player 1: ");
+		wattroff(w_score, COLOR_PAIR(PAIR_PLAYER));
 
-	wclrtoeol(w_score);
-	wattron(w_score, COLOR_PAIR(PAIR_SCORE));
-	wprintw(w_score, "%u", score);
-	wattroff(w_score, COLOR_PAIR(PAIR_SCORE));
+		wclrtoeol(w_score);
+		wattron(w_score, COLOR_PAIR(PAIR_SCORE));
+		wprintw(w_score, "%u", score);
+		wattroff(w_score, COLOR_PAIR(PAIR_SCORE));
 
+		wattron(w_score, COLOR_PAIR(PAIR_PLAYER2));
+		waddstr(w_score, " Player 2: ");
+		wattroff(w_score, COLOR_PAIR(PAIR_PLAYER2));
+		wattron(w_score, COLOR_PAIR(PAIR_SCORE));
+		wprintw(w_score, "%u", *score2);
+		wattroff(w_score, COLOR_PAIR(PAIR_SCORE));
+	}
+	else
+	{
+		mvwaddstr(w_score, 0, 0, "Score: ");
+
+		wclrtoeol(w_score);
+		wattron(w_score, COLOR_PAIR(PAIR_SCORE));
+		wprintw(w_score, "%u", score);
+		wattroff(w_score, COLOR_PAIR(PAIR_SCORE));
+	}
 	wnoutrefresh(w_score);
 }
 
@@ -68,7 +92,7 @@ redraw_score(WINDOW *w_score, unsigned int score)
  * Draws the keys window
  */
 static void
-draw_keys(WINDOW *w_keys)
+draw_keys(WINDOW *w_keys, int two_players)
 {
 	wborder(w_keys, 0, 0, 0, 0, 0, 0, 0, 0);
 
@@ -76,12 +100,34 @@ draw_keys(WINDOW *w_keys)
 	mvwaddstr(w_keys, 1, WIDTH_W_KEYS/2 - 2, "Keys");
 	wattroff(w_keys, A_BOLD);
 
-	mvwaddstr(w_keys, 3, 2, "Up:    w, k, up arrow");
-	mvwaddstr(w_keys, 4, 2, "Down:  s, j, down arrow");
-	mvwaddstr(w_keys, 5, 2, "Left:  a, h, left arrow");
-	mvwaddstr(w_keys, 6, 2, "Right: d, l, right arrow");
-	mvwaddstr(w_keys, 8, 2, "Pause: p");
-	mvwaddstr(w_keys, 9, 2, "Quit:  q");
+	if (two_players)
+	{
+		wattron(w_keys, COLOR_PAIR(PAIR_PLAYER));
+		mvwaddstr(w_keys, 3, 2, "Player 1");
+		wattroff(w_keys, COLOR_PAIR(PAIR_PLAYER));
+		mvwaddstr(w_keys, 4, 2, "Up:    w, k");
+		mvwaddstr(w_keys, 5, 2, "Down:  s, j");
+		mvwaddstr(w_keys, 6, 2, "Left:  a, h");
+		mvwaddstr(w_keys, 7, 2, "Right: d, l");
+		wattron(w_keys, COLOR_PAIR(PAIR_PLAYER2));
+		mvwaddstr(w_keys, 9, 2, "Player 2");
+		wattroff(w_keys, COLOR_PAIR(PAIR_PLAYER2));
+		mvwaddstr(w_keys, 10, 2, "Up:    up arrow");
+		mvwaddstr(w_keys, 11, 2, "Down:  down arrow");
+		mvwaddstr(w_keys, 12, 2, "Left:  left arrow");
+		mvwaddstr(w_keys, 13, 2, "Right: right arrow");
+		mvwaddstr(w_keys, 15, 2, "Pause: p");
+		mvwaddstr(w_keys, 16, 2, "Quit:  q");
+	}
+	else
+	{
+		mvwaddstr(w_keys, 3, 2, "Up:    w, k, up arrow");
+		mvwaddstr(w_keys, 4, 2, "Down:  s, j, down arrow");
+		mvwaddstr(w_keys, 5, 2, "Left:  a, h, left arrow");
+		mvwaddstr(w_keys, 6, 2, "Right: d, l, right arrow");
+		mvwaddstr(w_keys, 8, 2, "Pause: p");
+		mvwaddstr(w_keys, 9, 2, "Quit:  q");
+	}
 
 	wnoutrefresh(w_keys);
 }
@@ -90,7 +136,8 @@ draw_keys(WINDOW *w_keys)
  * Updates game window acording to the field's map
  */
 static void
-redraw_game(WINDOW *w_game, field_t *field, direction_t direction)
+redraw_game(WINDOW *w_game, field_t *field,
+		direction_t dir, direction_t dir2)
 {
 	int i, j;
 
@@ -108,8 +155,12 @@ redraw_game(WINDOW *w_game, field_t *field, direction_t direction)
 					mvwaddch(w_game, i, j, '#' | COLOR_PAIR(PAIR_SNAKE));
 					break;
 				case HEAD:
-					wattron(w_game, COLOR_PAIR(PAIR_HEAD));
-					switch (direction)
+				case HEAD2:
+					if (field->matrix[i][j] == HEAD)
+						wattron(w_game, COLOR_PAIR(PAIR_HEAD));
+					else
+						wattron(w_game, COLOR_PAIR(PAIR_HEAD2));
+					switch (field->matrix[i][j] == HEAD ? dir : dir2)
 					{
 						case NORTH:
 							mvwaddch(w_game, i, j, '^');
@@ -123,7 +174,10 @@ redraw_game(WINDOW *w_game, field_t *field, direction_t direction)
 						case SOUTH:
 							mvwaddch(w_game, i, j, 'v');
 					}
-					wattroff(w_game, COLOR_PAIR(PAIR_HEAD));
+					if (field->matrix[i][j] == HEAD)
+						wattroff(w_game, COLOR_PAIR(PAIR_HEAD));
+					else
+						wattroff(w_game, COLOR_PAIR(PAIR_HEAD2));
 					break;
 				case FOOD:
 					mvwaddch(w_game, i, j, 'f' | COLOR_PAIR(PAIR_FOOD));
@@ -177,9 +231,13 @@ start(arguments_t *args)
 {
 	WINDOW *w_score, *w_game, *w_keys;
 	field_t *field;
-	snake_t *snake;
-	unsigned int w_game_y, score, keep_mainloop;
+	snake_t *snake, *snake2, *snakex;
+	unsigned int w_game_y, w_keys_height, score, score2, keep_mainloop;
+	unsigned int *scorex;
 	time_t delay;
+
+	/* Stores who pressed the key */
+	enum {AC_TIMEOUT, AC_PLAYER, AC_PLAYER2} action_who;
 
 	set_curses_properties();
 
@@ -192,48 +250,95 @@ start(arguments_t *args)
 	w_game_y = (LINES+3)/2 - args->height/2;  /* Starting line of w_game */
 	w_score = newwin(1, COLS - WIDTH_W_KEYS - 4, w_game_y - 1, 1);
 	w_game = newwin(args->height, args->width, w_game_y, 1);
-	w_keys = newwin(11, WIDTH_W_KEYS, LINES/2 - 5, COLS - WIDTH_W_KEYS - 1);
+	w_keys_height = args->two_players ? 18 : 11;
+	w_keys = newwin(w_keys_height, WIDTH_W_KEYS, LINES/2 - w_keys_height/2,
+			COLS - WIDTH_W_KEYS - 1);
 
 	field = init_field(args->height, args->width, args->permill_obstacles);
-	snake = init_snake(field);
+	snake = init_snake(field, HEAD);
+	if (args->two_players)
+		snake2 = init_snake(field, HEAD2);
 	add_food(field);
 
-	draw_keys(w_keys);
+	draw_keys(w_keys, args->two_players);
 
 	/* Mainloop */
 	score = 0;
+	score2 = 0;
 	keep_mainloop = 1;
 	delay = args->starting_delay;
 	timeout(delay);
 	while (keep_mainloop)
 	{
 		remove_expired_items(field);
-		redraw_score(w_score, score);
-		redraw_game(w_game, field, snake->direction);
+		if (args->two_players)
+			redraw_score(w_score, score, &score2);
+		else
+			redraw_score(w_score, score, NULL);
+		redraw_game(w_game, field, snake->direction,
+				args->two_players ? snake2->direction : 0);
 		doupdate();
 
 		/* Get user input */
+		action_who = AC_PLAYER;
 		switch (getch())
 		{
+			case ERR:
+				action_who = AC_TIMEOUT;
+				break;
 			case 'w':
 			case 'k':
-			case KEY_UP:
 				snake->direction = NORTH;
 				break;
 			case 'a':
 			case 'h':
-			case KEY_LEFT:
 				snake->direction = WEST;
 				break;
 			case 's':
 			case 'j':
-			case KEY_DOWN:
 				snake->direction = SOUTH;
 				break;
 			case 'd':
 			case 'l':
-			case KEY_RIGHT:
 				snake->direction = EAST;
+				break;
+
+				/* Keys functionality depends on two_players mode */
+			case KEY_UP:
+				if (args->two_players)
+				{
+					snake2->direction = NORTH;
+					action_who = AC_PLAYER2;
+				}
+				else
+					snake->direction = NORTH;
+				break;
+			case KEY_LEFT:
+				if (args->two_players)
+				{
+					snake2->direction = WEST;
+					action_who = AC_PLAYER2;
+				}
+				else
+					snake->direction = WEST;
+				break;
+			case KEY_RIGHT:
+				if (args->two_players)
+				{
+					snake2->direction = EAST;
+					action_who = AC_PLAYER2;
+				}
+				else
+					snake->direction = EAST;
+				break;
+			case KEY_DOWN:
+				if (args->two_players)
+				{
+					snake2->direction = SOUTH;
+					action_who = AC_PLAYER2;
+				}
+				else
+					snake->direction = SOUTH;
 				break;
 			case 'p':
 				pause(w_game, delay);
@@ -243,58 +348,91 @@ start(arguments_t *args)
 		}
 
 		/* Move the snake */
-		switch (advance(field, snake))
+		for (int i = 0; i <= 1 && keep_mainloop; i++)
 		{
-			case EMPTY:
-				break;
-			case SNAKE:
-			case HEAD:
-			case BORDER:
-			case OBSTACLE:
-				keep_mainloop = 0;
-				break;
-			case FOOD:
-				add_food(field);
-				score += POINTS_FOOD;
+			if (i == 0) /* Player turn */
+			{
+				/* Skip to player2 if the action was of him */
+				if (action_who == AC_PLAYER2)
+					continue;
+				snakex = snake;
+				scorex = &score;
+			}
+			else /* Player2 turn */
+			{
+				if (!args->two_players || action_who == AC_PLAYER)
+					break;
+				snakex = snake2;
+				scorex = &score2;
+			}
 
-				/* Delay reduction */
-				if (delay > args->minimum_delay)
-					delay -= args->step_delay;
-				else
-					delay = args->minimum_delay;
-				timeout(delay);
+			switch (advance(field, snakex))
+			{
+				case EMPTY:
+					break;
+				case SNAKE:
+				case HEAD:
+				case HEAD2:
+				case BORDER:
+				case OBSTACLE:
+					keep_mainloop = 0;
+					break;
+				case FOOD:
+					add_food(field);
+					*scorex += POINTS_FOOD;
 
-				/* Items generation */
-				if (rand() % PROBABILITY_SHORTENER == 0)
-					add_temp_item(field, SHORTENER, DURATION_SHORTENER);
-				if (rand() % PROBABILITY_DECELERATOR == 0)
-					add_temp_item(field, DECELERATOR, DURATION_DECELERATOR);
-				if (rand() % PROBABILITY_EXTRA_POINTS == 0)
-					add_temp_item(field, EXTRA_POINTS, DURATION_EXTRA_POINTS);
-				break;
-			case SHORTENER:
-				score += POINTS_SHORTENER;
-				break;
-			case DECELERATOR:
-				score += POINTS_DECELERATOR;
-				delay = args->starting_delay;
-				timeout(delay);
-				break;
-			case EXTRA_POINTS:
-				score += POINTS_EXTRA_POINTS;
-				break;
+					/* Delay reduction */
+					if (delay > args->minimum_delay)
+						delay -= args->step_delay;
+					else
+						delay = args->minimum_delay;
+					timeout(delay);
+
+					/* Items generation */
+					if (rand() % PROBABILITY_SHORTENER == 0)
+						add_temp_item(field, SHORTENER, DURATION_SHORTENER);
+					if (rand() % PROBABILITY_DECELERATOR == 0)
+						add_temp_item(field, DECELERATOR, DURATION_DECELERATOR);
+					if (rand() % PROBABILITY_EXTRA_POINTS == 0)
+						add_temp_item(field, EXTRA_POINTS, DURATION_EXTRA_POINTS);
+					break;
+				case SHORTENER:
+					*scorex += POINTS_SHORTENER;
+					break;
+				case DECELERATOR:
+					*scorex += POINTS_DECELERATOR;
+					delay = args->starting_delay;
+					timeout(delay);
+					break;
+				case EXTRA_POINTS:
+					*scorex += POINTS_EXTRA_POINTS;
+					break;
+			}
 		}
 	}
 
-	/* Free the memory */
-	delete_snake(snake);
-	delete_field(field);
+	/* Kill Ncurses */
 	delwin(w_score);
 	delwin(w_game);
 	delwin(w_keys);
 	endwin();
 
-	printf("Your score: %u\n", score);
+	if (args->two_players)
+	{
+		printf("Player %d died first\n", snakex == snake ? 1 : 2);
+		puts("====================");
+		printf("Player 1 score: %u\n", score);
+		printf("Player 2 score: %u\n", score2);
+	}
+	else
+		printf("Your score: %u\n", score);
+
+	/* Free the memory */
+	delete_snake(snake);
+	if (args->two_players)
+		delete_snake(snake2);
+	delete_field(field);
+
 }
 
 /*
