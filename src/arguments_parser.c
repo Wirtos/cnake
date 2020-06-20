@@ -50,7 +50,7 @@ init_arguments()
 static void
 display_help(char *executable)
 {
-	const int OPT_WIDTH = 32;
+	const int OPT_WIDTH = 34;
 
 	printf("Usage: %s [OPTIONS]\n", executable);
 	puts("\nSnake Curses game");
@@ -75,11 +75,11 @@ display_help(char *executable)
 	printf("\t%-*sSet reduction of delay in milliseconds when eating food (Def: %d)\n",
 			OPT_WIDTH, "-S, --step-delay <ms>", DEFAULT_STEP_DELAY);
 	puts("\nTemporal items duration:");
-	printf("\t%-*sSet duration of decelerators (Def: %d)\n",
+	printf("\t%-*sSet duration of decelerators in seconds (Def: %d)\n",
 			OPT_WIDTH, "-d, --duration-decelerator <s>", DEFAULT_DURATION_DECELERATOR);
-	printf("\t%-*sSet duration of shorteners (Def: %d)\n",
+	printf("\t%-*sSet duration of shorteners in seconds (Def: %d)\n",
 			OPT_WIDTH, "-D, --duration-shortener <s>", DEFAULT_DURATION_SHORTENER);
-	printf("\t%-*sSet duration of extra points (Def: %d)\n",
+	printf("\t%-*sSet duration of extra points in seconds (Def: %d)\n",
 			OPT_WIDTH, "-e, --duration-extra-points <s>", DEFAULT_DURATION_EXTRA_POINTS);
 	printf("\n\t%-*sDisplay this help\n", OPT_WIDTH, "-h, --help");
 }
