@@ -34,8 +34,12 @@ Delay:
 	-m, --minimum-delay <ms>        Set minumum delay in milliseconds (Def: 120)
 	-S, --step-delay <ms>           Set reduction of delay in milliseconds when eating food (Def: 10)
 
-	-h, --help                      Display this help
+Temporal items duration:
+	-d, --duration-decelerator <s>  Set duration of decelerators (Def: 7)
+	-D, --duration-shortener <s>    Set duration of shorteners (Def: 5)
+	-e, --duration-extra-points <s> Set duration of extra points (Def: 5)
 
+	-h, --help                      Display this help
 ```
 
 ### Dependencies
