@@ -393,11 +393,11 @@ start(arguments_t *args)
 
 					/* Items generation */
 					if (rand() % PROBABILITY_SHORTENER == 0)
-						add_temp_item(field, SHORTENER, DURATION_SHORTENER);
+						add_temp_item(field, SHORTENER, args->duration_shortener);
 					if (rand() % PROBABILITY_DECELERATOR == 0)
-						add_temp_item(field, DECELERATOR, DURATION_DECELERATOR);
+						add_temp_item(field, DECELERATOR, args->duration_decelerator);
 					if (rand() % PROBABILITY_EXTRA_POINTS == 0)
-						add_temp_item(field, EXTRA_POINTS, DURATION_EXTRA_POINTS);
+						add_temp_item(field, EXTRA_POINTS, args->duration_extra_points);
 					break;
 				case SHORTENER:
 					*scorex += POINTS_SHORTENER;
@@ -488,6 +488,14 @@ set_default_options(arguments_t *args)
 
 	if (args->step_delay == -1)
 		args->step_delay = DEFAULT_STEP_DELAY;
+
+	/* Durations settings */
+	if (args->duration_shortener == -1)
+		args->duration_shortener = DEFAULT_DURATION_SHORTENER;
+	if (args->duration_decelerator == -1)
+		args->duration_decelerator = DEFAULT_DURATION_DECELERATOR;
+	if (args->duration_extra_points == -1)
+		args->duration_extra_points = DEFAULT_DURATION_EXTRA_POINTS;
 }
 
 int

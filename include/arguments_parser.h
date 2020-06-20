@@ -25,6 +25,7 @@ typedef struct arguments_s
 	int permill_obstacles;
 	int starting_delay, minimum_delay, step_delay;
 	int two_players;
+	int duration_shortener, duration_decelerator, duration_extra_points;
 } arguments_t;
 
 /*

@@ -37,6 +37,9 @@ init_arguments()
 	args->minimum_delay = -1;
 	args->step_delay = -1;
 	args->two_players = 0;
+	args->duration_shortener = -1;
+	args->duration_decelerator = -1;
+	args->duration_extra_points = -1;
 
 	return (args);
 }
@@ -71,6 +74,13 @@ display_help(char *executable)
 			"-m, --minimum-delay <ms>", DEFAULT_MINIMUM_DELAY);
 	printf("\t%-*sSet reduction of delay in milliseconds when eating food (Def: %d)\n",
 			OPT_WIDTH, "-S, --step-delay <ms>", DEFAULT_STEP_DELAY);
+	puts("\nTemporal items duration:");
+	printf("\t%-*sSet duration of decelerators (Def: %d)\n",
+			OPT_WIDTH, "-d, --duration-decelerator <s>", DEFAULT_DURATION_DECELERATOR);
+	printf("\t%-*sSet duration of shorteners (Def: %d)\n",
+			OPT_WIDTH, "-D, --duration-shortener <s>", DEFAULT_DURATION_SHORTENER);
+	printf("\t%-*sSet duration of extra points (Def: %d)\n",
+			OPT_WIDTH, "-e, --duration-extra-points <s>", DEFAULT_DURATION_EXTRA_POINTS);
 	printf("\n\t%-*sDisplay this help\n", OPT_WIDTH, "-h, --help");
 }
 
@@ -89,10 +99,14 @@ parse_arguments(int argc, char *argv[])
 		{"minimum-delay", required_argument, NULL, 'm'},
 		{"step-delay", required_argument, NULL, 'S'},
 		{"two-players", no_argument, NULL, '2'},
+		{"duration-decelerator", required_argument, NULL, 'd'},
+		{"duration-shortener", required_argument, NULL, 'D'},
+		{"duration-extra-points", required_argument, NULL, 'e'},
 		{"help", no_argument, NULL, 'h'},
 		{0, 0, 0, 0}
 	};
-	while ((op = getopt_long(argc, argv, ":tH:W:o:s:m:S:2h", long_options, NULL)) != -1)
+	while ((op = getopt_long(argc, argv, ":tH:W:o:s:m:S:2d:D:e:h",
+					long_options, NULL)) != -1)
 	{
 		switch (op)
 		{
@@ -119,6 +133,15 @@ parse_arguments(int argc, char *argv[])
 				break;
 			case '2':
 				args->two_players = 1;
+				break;
+			case 'D':
+				args->duration_shortener = atoi(optarg);
+				break;
+			case 'd':
+				args->duration_decelerator = atoi(optarg);
+				break;
+			case 'e':
+				args->duration_extra_points = atoi(optarg);
 				break;
 			case 'h':
 				display_help(argv[0]);
