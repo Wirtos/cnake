@@ -24,6 +24,24 @@
 #include <stdlib.h>
 #include <time.h>
 
+/* Color pairs */
+enum
+{
+	PAIR_DEFAULT,
+	PAIR_SCORE,
+	PAIR_BORDER,
+	PAIR_SNAKE,
+	PAIR_HEAD,
+	PAIR_HEAD2,
+	PAIR_FOOD,
+	PAIR_SHORTENER,
+	PAIR_DECELERATOR,
+	PAIR_EXTRA_POINTS,
+	PAIR_TITLE,
+	PAIR_PLAYER,
+	PAIR_PLAYER2,
+};
+
 /*
  * Prepares colors
  */
