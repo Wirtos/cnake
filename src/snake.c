@@ -169,13 +169,13 @@ advance(field_t *field, snake_t *snake)
 			break;
 		case SNAKE:
 			/*
-			 * Treat neck as empty cell and reverse direction so the snake
-			 * doesn't die if it tries to go against it
+			 * Reverse direction and advance again if hitting the neck so
+			 * the snake doesn't die if it tries to go against it
 			 */
 			if (next_y == snake->neck->y && next_x == snake->neck->x)
 			{
-				old_type = EMPTY;
 				reverse_direction(snake);
+				old_type = advance(field, snake);
 			}
 			break;
 		case BORDER:
