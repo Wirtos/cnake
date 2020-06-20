@@ -51,6 +51,8 @@ display_help(char *executable)
 
 	printf("Usage: %s [OPTIONS]\n", executable);
 	puts("\nSnake Curses game");
+	puts("\nPlayers:");
+	printf("\t%-*sEnable two players mode\n", OPT_WIDTH, "-2, --two-players");
 	puts("\nSize:");
 	printf("\t%-*sMap dimensions following terminal size\n", OPT_WIDTH,
 			"-t, --use-terminal-dimensions");
@@ -69,8 +71,6 @@ display_help(char *executable)
 			"-m, --minimum-delay <ms>", DEFAULT_MINIMUM_DELAY);
 	printf("\t%-*sSet reduction of delay in milliseconds when eating food (Def: %d)\n",
 			OPT_WIDTH, "-S, --step-delay <ms>", DEFAULT_STEP_DELAY);
-	puts("\nPlayers:");
-	printf("\t%-*sEnable two players mode\n", OPT_WIDTH, "-2, --two-players");
 	printf("\n\t%-*sDisplay this help\n", OPT_WIDTH, "-h, --help");
 }
 

@@ -2,7 +2,7 @@
 
 ![Snake Curses](screenshot.png)
 
-This is a basic Snake game in C with Ncurses. Raise the score eating food without hitting the wall, obstacles or yourself.
+This is a basic Snake game in C with Ncurses. Raise the score eating food without hitting the wall, obstacles or yourself. You can also play with another person in two-players mode.
 This are the items you will find in the map:
 
 - **x**: Obstacle. As with the borders, your snake dies if you hit them
@@ -16,6 +16,9 @@ You can customize some of the default settings with the command line arguments:
 Usage: snake [OPTIONS]
 
 Snake Curses game
+
+Players:
+	-2, --two-players               Enable two players mode
 
 Size:
 	-t, --use-terminal-dimensions   Map dimensions following terminal size
@@ -32,6 +35,7 @@ Delay:
 	-S, --step-delay <ms>           Set reduction of delay in milliseconds when eating food (Def: 10)
 
 	-h, --help                      Display this help
+
 ```
 
 ### Dependencies
