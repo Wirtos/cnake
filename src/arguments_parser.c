@@ -40,6 +40,9 @@ init_arguments()
 	args->duration_shortener = -1;
 	args->duration_decelerator = -1;
 	args->duration_extra_points = -1;
+	args->probability_decelerator = -1;
+	args->probability_shortener = -1;
+	args->probability_extra_points = -1;
 
 	return (args);
 }
@@ -50,7 +53,7 @@ init_arguments()
 static void
 display_help(char *executable)
 {
-	const int OPT_WIDTH = 34;
+	const int OPT_WIDTH = 39;
 
 	printf("Usage: %s [OPTIONS]\n", executable);
 	puts("\nSnake Curses game");
@@ -81,6 +84,16 @@ display_help(char *executable)
 			OPT_WIDTH, "-D, --duration-shortener <s>", DEFAULT_DURATION_SHORTENER);
 	printf("\t%-*sSet duration of extra points in seconds (Def: %d)\n",
 			OPT_WIDTH, "-e, --duration-extra-points <s>", DEFAULT_DURATION_EXTRA_POINTS);
+	puts("\nProbability of items (1/X chances of appearing when eating a food):");
+	printf("\t%-*sSet probability of decelerators (Def: %d)\n",
+			OPT_WIDTH, "-p, --probability-decelerator <prob>",
+			DEFAULT_PROBABILITY_DECELERATOR);
+	printf("\t%-*sSet probability of shorteners (Def: %d)\n",
+			OPT_WIDTH, "-P, --probability-shortener <prob>",
+			DEFAULT_PROBABILITY_SHORTENER);
+	printf("\t%-*sSet probability of extra points (Def: %d)\n",
+			OPT_WIDTH, "-E, --probability-extra-points <prob>",
+			DEFAULT_PROBABILITY_EXTRA_POINTS);
 	printf("\n\t%-*sDisplay this help\n", OPT_WIDTH, "-h, --help");
 }
 
@@ -102,10 +115,13 @@ parse_arguments(int argc, char *argv[])
 		{"duration-decelerator", required_argument, NULL, 'd'},
 		{"duration-shortener", required_argument, NULL, 'D'},
 		{"duration-extra-points", required_argument, NULL, 'e'},
+		{"probability-decelerator", required_argument, NULL, 'p'},
+		{"probability-shortener", required_argument, NULL, 'P'},
+		{"probability-extra-points", required_argument, NULL, 'E'},
 		{"help", no_argument, NULL, 'h'},
 		{0, 0, 0, 0}
 	};
-	while ((op = getopt_long(argc, argv, ":tH:W:o:s:m:S:2d:D:e:h",
+	while ((op = getopt_long(argc, argv, ":tH:W:o:s:m:S:2d:D:e:p:P:E:h",
 					long_options, NULL)) != -1)
 	{
 		switch (op)
@@ -142,6 +158,15 @@ parse_arguments(int argc, char *argv[])
 				break;
 			case 'e':
 				args->duration_extra_points = atoi(optarg);
+				break;
+			case 'p':
+				args->probability_decelerator = atoi(optarg);
+				break;
+			case 'P':
+				args->probability_shortener = atoi(optarg);
+				break;
+			case 'E':
+				args->probability_extra_points = atoi(optarg);
 				break;
 			case 'h':
 				display_help(argv[0]);

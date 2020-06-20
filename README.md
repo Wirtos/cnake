@@ -18,28 +18,33 @@ Usage: snake [OPTIONS]
 Snake Curses game
 
 Players:
-	-2, --two-players                 Enable two players mode
+	-2, --two-players                      Enable two players mode
 
 Size:
-	-t, --use-terminal-dimensions     Map dimensions following terminal size
+	-t, --use-terminal-dimensions          Map dimensions following terminal size
 OR:
-	-H, --height <height>             Set height of the map (Def: 26)
-	-W, --width <width>               Set width of the map (Def: 66)
+	-H, --height <height>                  Set height of the map (Def: 26)
+	-W, --width <width>                    Set width of the map (Def: 66)
 
 Obstacles:
-	-o, --obstacles <permill>         Set permill of obstacles in the map (Def: 10)
+	-o, --obstacles <permill>              Set permill of obstacles in the map (Def: 10)
 
 Delay:
-	-s, --starting-delay <ms>         Set starting delay in milliseconds (Def: 300)
-	-m, --minimum-delay <ms>          Set minumum delay in milliseconds (Def: 120)
-	-S, --step-delay <ms>             Set reduction of delay in milliseconds when eating food (Def: 10)
+	-s, --starting-delay <ms>              Set starting delay in milliseconds (Def: 300)
+	-m, --minimum-delay <ms>               Set minumum delay in milliseconds (Def: 120)
+	-S, --step-delay <ms>                  Set reduction of delay in milliseconds when eating food (Def: 10)
 
 Temporal items duration:
-	-d, --duration-decelerator <s>    Set duration of decelerators in seconds (Def: 7)
-	-D, --duration-shortener <s>      Set duration of shorteners in seconds (Def: 5)
-	-e, --duration-extra-points <s>   Set duration of extra points in seconds (Def: 5)
+	-d, --duration-decelerator <s>         Set duration of decelerators in seconds (Def: 7)
+	-D, --duration-shortener <s>           Set duration of shorteners in seconds (Def: 5)
+	-e, --duration-extra-points <s>        Set duration of extra points in seconds (Def: 5)
 
-	-h, --help                        Display this help
+Probability of items (1/X chances of appearing when eating a food):
+	-p, --probability-decelerator <prob>   Set probability of decelerators (Def: 10)
+	-P, --probability-shortener <prob>     Set probability of shorteners (Def: 15)
+	-E, --probability-extra-points <prob>  Set probability of extra points (Def: 10)
+
+	-h, --help                             Display this help
 ```
 
 ### Dependencies

@@ -50,9 +50,9 @@
 /*
  * Probabilities: 1/X chances of item appearing when eating a FOOD
  */
-#define PROBABILITY_SHORTENER 15
-#define PROBABILITY_DECELERATOR 10
-#define PROBABILITY_EXTRA_POINTS 10
+#define DEFAULT_PROBABILITY_SHORTENER 15
+#define DEFAULT_PROBABILITY_DECELERATOR 10
+#define DEFAULT_PROBABILITY_EXTRA_POINTS 10
 
 /* Color pairs */
 enum

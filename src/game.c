@@ -392,11 +392,11 @@ start(arguments_t *args)
 					timeout(delay);
 
 					/* Items generation */
-					if (rand() % PROBABILITY_SHORTENER == 0)
+					if (rand() % args->probability_shortener == 0)
 						add_temp_item(field, SHORTENER, args->duration_shortener);
-					if (rand() % PROBABILITY_DECELERATOR == 0)
+					if (rand() % args->probability_decelerator == 0)
 						add_temp_item(field, DECELERATOR, args->duration_decelerator);
-					if (rand() % PROBABILITY_EXTRA_POINTS == 0)
+					if (rand() % args->probability_extra_points == 0)
 						add_temp_item(field, EXTRA_POINTS, args->duration_extra_points);
 					break;
 				case SHORTENER:
@@ -496,6 +496,14 @@ set_default_options(arguments_t *args)
 		args->duration_decelerator = DEFAULT_DURATION_DECELERATOR;
 	if (args->duration_extra_points == -1)
 		args->duration_extra_points = DEFAULT_DURATION_EXTRA_POINTS;
+
+	/* Probability settings */
+	if (args->probability_shortener == -1)
+		args->probability_shortener = DEFAULT_PROBABILITY_SHORTENER;
+	if (args->probability_decelerator == -1)
+		args->probability_decelerator = DEFAULT_PROBABILITY_DECELERATOR;
+	if (args->probability_extra_points == -1)
+		args->probability_extra_points = DEFAULT_PROBABILITY_EXTRA_POINTS;
 }
 
 int
