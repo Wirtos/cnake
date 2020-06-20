@@ -1,6 +1,6 @@
 CC = cc
 SHELL = /bin/sh
-CFLAGS += -Iinclude -Wall -Werror -Wextra $(shell pkg-config --libs ncurses)
+CFLAGS += -Iinclude -Wall -Werror -Wextra -lncurses -ltinfo
 PREFIX = /usr/local
 
 NAME = snake

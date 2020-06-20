@@ -49,7 +49,6 @@ Probability of items (1/X chances of appearing when eating a food):
 
 ### Dependencies
 - Make
-- pkg-config
 - GCC/Clang
 - Ncurses
 
