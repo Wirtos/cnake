@@ -3,7 +3,7 @@
 ![Snake Curses](screenshot.png)
 
 This is a basic Snake game in C with Ncurses. Raise the score eating food without hitting the wall, obstacles or yourself. You can also play with another person in two-players mode.
-This are the items you will find in the map:
+These are the items you will find in the map:
 
 - **x**: Obstacle. As with the borders, your snake dies if you hit them
 - **f**: Food. It will increase by one your size and give you points
