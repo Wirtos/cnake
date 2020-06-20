@@ -74,6 +74,12 @@ int
 add_temp_item(field_t *field, cell_t type, time_t duration);
 
 /*
+ * Add extra_seconds to all the temporal items in the map
+ */
+void
+prolong_temp_items(field_t *field, time_t extra_seconds);
+
+/*
  * Take away expired items from the map
  */
 void

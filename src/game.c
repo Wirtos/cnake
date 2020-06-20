@@ -208,9 +208,10 @@ redraw_game(WINDOW *w_game, field_t *field,
  * Pause game and display PAUSED banner in w_game
  */
 static void
-pause(WINDOW *w_game, time_t delay)
+pause(WINDOW *w_game, field_t *field, time_t delay)
 {
 	int max_y, max_x;
+	time_t before_pause;
 
 	getmaxyx(w_game, max_y, max_x);
 	wattron(w_game, A_REVERSE);
@@ -219,7 +220,9 @@ pause(WINDOW *w_game, time_t delay)
 	wrefresh(w_game);
 
 	timeout(-1);  /* Take out timeout */
+	before_pause = time(NULL);
 	getch();
+	prolong_temp_items(field, time(NULL) - before_pause);
 	timeout(delay);  /* Restore timeout */
 }
 
@@ -341,7 +344,7 @@ start(arguments_t *args)
 					snake->direction = SOUTH;
 				break;
 			case 'p':
-				pause(w_game, delay);
+				pause(w_game, field, delay);
 				break;
 			case 'q':
 				keep_mainloop = 0;

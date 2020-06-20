@@ -217,6 +217,19 @@ add_temp_item(field_t *field, cell_t type, time_t duration)
 }
 
 void
+prolong_temp_items(field_t *field, time_t extra_seconds)
+{
+	temp_item_t *curr;
+
+	curr = field->til;
+	while (curr)
+	{
+		curr->scheduled_destruction += extra_seconds;
+		curr = curr->next;
+	}
+}
+
+void
 remove_expired_items(field_t *field)
 {
 	coord_t y, x;
