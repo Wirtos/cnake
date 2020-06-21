@@ -253,7 +253,7 @@ start(arguments_t *args)
 	WINDOW *w_score, *w_game, *w_keys;
 	field_t *field;
 	snake_t *snake, *snake2, *snakex;
-	unsigned int w_game_y, w_keys_height, score, score2, keep_mainloop;
+	unsigned int w_game_y, w_keys_height, score, score2, keep_mainloop, died;
 	unsigned int *scorex;
 	time_t delay;
 
@@ -286,6 +286,7 @@ start(arguments_t *args)
 	/* Mainloop */
 	score = 0;
 	score2 = 0;
+	died = 0;
 	keep_mainloop = 1;
 	delay = args->starting_delay;
 	timeout(delay);
@@ -396,6 +397,7 @@ start(arguments_t *args)
 				case HEAD2:
 				case BORDER:
 				case OBSTACLE:
+					died = 1;
 					keep_mainloop = 0;
 					break;
 				case FOOD:
@@ -440,8 +442,11 @@ start(arguments_t *args)
 
 	if (args->two_players)
 	{
-		printf("Player %d died first\n", snakex == snake ? 1 : 2);
-		puts("====================");
+		if (died)
+		{
+			printf("Player %d died first\n", snakex == snake ? 1 : 2);
+			puts("====================");
+		}
 		printf("Player 1 score: %u\n", score);
 		printf("Player 2 score: %u\n", score2);
 	}
