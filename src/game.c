@@ -277,8 +277,7 @@ start(arguments_t *args)
 
 	field = init_field(args->height, args->width, args->permill_obstacles);
 	snake = init_snake(field, HEAD);
-	if (args->two_players)
-		snake2 = init_snake(field, HEAD2);
+	snake2= args->two_players ? init_snake(field, HEAD2) : NULL;
 	add_food(field);
 
 	draw_keys(w_keys, args->two_players);

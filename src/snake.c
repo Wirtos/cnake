@@ -131,7 +131,7 @@ reverse_direction(snake_t *snake)
 cell_t
 advance(field_t *field, snake_t *snake)
 {
-	coord_t next_y, next_x;
+	coord_t next_y = 0, next_x = 0;
 	cell_t old_type;
 
 	switch (snake->direction)
