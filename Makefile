@@ -1,6 +1,7 @@
 CC = cc
 SHELL = /bin/sh
-CFLAGS += -Iinclude -Wall -Werror -Wextra -lncurses -ltinfo
+CFLAGS += -Iinclude -Wall -Werror -Wextra
+LDFLAGS += -lncurses -ltinfo
 PREFIX = /usr/local
 
 NAME = snake
@@ -12,7 +13,7 @@ OBJS = $(SRCS:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LDFLAGS)
 
 .o: .c
 	$(CC) $(CFLAGS) -c $< -o $@
