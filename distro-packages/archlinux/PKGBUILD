@@ -1,3 +1,5 @@
+# Maintainer: Esteban López <gnu_stallman (a) protonmail (.) ch>
+
 pkgname=snake-curses
 pkgver=0.1.2
 pkgrel=1
