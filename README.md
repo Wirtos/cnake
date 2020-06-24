@@ -47,6 +47,9 @@ Probability of items (1/X chances of appearing when eating a food):
 	-h, --help                             Display this help
 ```
 
+### AUR
+If you use ArchLinux or a derivative, you can install the program from the AUR: [snake-curses](https://aur.archlinux.org/packages/snake-curses)
+
 ### Dependencies
 - Make
 - GCC/Clang
