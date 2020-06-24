@@ -45,7 +45,7 @@ Probability of items (1/X chances of appearing when eating a food):
 	-E, --probability-extra-points <prob>  Set probability of extra points (Def: 10)
 
 Map change:
-	-c, --score-step-map-change <score>    Set the step of score between map changes (Def: 500)
+	-c, --score-step-map-change <score>    Set the step of score between map changes (Def: 200)
 	-C, --disable-map-change               Disable map changing
 
 	-h, --help                             Display this help
