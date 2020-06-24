@@ -43,6 +43,8 @@ init_arguments()
 	args->probability_decelerator = -1;
 	args->probability_shortener = -1;
 	args->probability_extra_points = -1;
+	args->score_step_map_change = -1;
+	args->disable_map_change = 0;
 
 	return (args);
 }
@@ -94,6 +96,10 @@ display_help(char *executable)
 	printf("\t%-*sSet probability of extra points (Def: %d)\n",
 			OPT_WIDTH, "-E, --probability-extra-points <prob>",
 			DEFAULT_PROBABILITY_EXTRA_POINTS);
+	puts("\nMap change:");
+	printf("\t%-*sSet the step of score between map changes (Def: %d)\n", OPT_WIDTH,
+			"-c, --score-step-map-change <score>", DEFAULT_SCORE_STEP_MAP_CHANGE);
+	printf("\t%-*sDisable map changing\n", OPT_WIDTH,	"-C, --disable-map-change");
 	printf("\n\t%-*sDisplay this help\n", OPT_WIDTH, "-h, --help");
 }
 
@@ -118,10 +124,12 @@ parse_arguments(int argc, char *argv[])
 		{"probability-decelerator", required_argument, NULL, 'p'},
 		{"probability-shortener", required_argument, NULL, 'P'},
 		{"probability-extra-points", required_argument, NULL, 'E'},
+		{"score-step-map-change", required_argument, NULL, 'c'},
+		{"disable-map-change", no_argument, NULL, 'C'},
 		{"help", no_argument, NULL, 'h'},
 		{0, 0, 0, 0}
 	};
-	while ((op = getopt_long(argc, argv, ":tH:W:o:s:m:S:2d:D:e:p:P:E:h",
+	while ((op = getopt_long(argc, argv, ":tH:W:o:s:m:S:2d:D:e:p:P:E:c:Ch",
 					long_options, NULL)) != -1)
 	{
 		switch (op)
@@ -167,6 +175,12 @@ parse_arguments(int argc, char *argv[])
 				break;
 			case 'E':
 				args->probability_extra_points = atoi(optarg);
+				break;
+			case 'c':
+				args->score_step_map_change = atoi(optarg);
+				break;
+			case 'C':
+				args->disable_map_change = 1;
 				break;
 			case 'h':
 				display_help(argv[0]);

@@ -20,13 +20,15 @@
 
 typedef struct arguments_s
 {
-	int height, width;  /* Value -1 means no specified */
+	/* Value -1 means no specified */
+	int height, width;
 	int use_terminal_dimensions;
 	int permill_obstacles;
 	int starting_delay, minimum_delay, step_delay;
 	int two_players;
 	int duration_shortener, duration_decelerator, duration_extra_points;
 	int probability_shortener, probability_decelerator, probability_extra_points;
+	int score_step_map_change, disable_map_change;
 } arguments_t;
 
 /*

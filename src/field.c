@@ -141,6 +141,29 @@ add_obstacle(field_t *field)
 	return (0);
 }
 
+/*
+ * Removes all the obstacles from the map and returns how many there were
+ */
+static int
+clear_obstacles(field_t *field)
+{
+	int i, j, n_obstacles = 0;
+
+	for (i = 1; i < field->height; i++)
+	{
+		for (j = 1; j < field->width; j++)
+		{
+			if (field->matrix[i][j] == OBSTACLE)
+			{
+				field->matrix[i][j] = EMPTY;
+				n_obstacles++;
+			}
+		}
+	}
+
+	return (n_obstacles);
+}
+
 field_t*
 init_field(int height, int width, int permill_obstacles)
 {
@@ -187,6 +210,16 @@ init_field(int height, int width, int permill_obstacles)
 	field->til = NULL;
 
 	return (field);
+}
+
+void
+change_obstacles(field_t *field)
+{
+	int n_obstacles;
+
+	n_obstacles = clear_obstacles(field);
+	while (n_obstacles--)
+		add_obstacle(field);
 }
 
 int

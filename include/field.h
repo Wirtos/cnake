@@ -60,6 +60,12 @@ field_t*
 init_field(int height, int width, int permill_obstacles);
 
 /*
+ * Changes the ubication of the obstacles to a new one
+ */
+void
+change_obstacles(field_t *field);
+
+/*
  * Add a random cell with food into the matrix. Return 0 if there wasn't
  * space for it. Return 1 in success
  */

@@ -254,6 +254,7 @@ start(arguments_t *args)
 	field_t *field;
 	snake_t *snake, *snake2, *snakex;
 	unsigned int w_game_y, w_keys_height, score, score2, keep_mainloop, died;
+	unsigned int score_last_change;
 	unsigned int *scorex;
 	time_t delay;
 
@@ -285,6 +286,7 @@ start(arguments_t *args)
 	/* Mainloop */
 	score = 0;
 	score2 = 0;
+	score_last_change = 0;
 	died = 0;
 	keep_mainloop = 1;
 	delay = args->starting_delay;
@@ -430,6 +432,14 @@ start(arguments_t *args)
 					*scorex += POINTS_EXTRA_POINTS;
 					break;
 			}
+
+			/* Map change */
+			if (!args->disable_map_change &&
+					*scorex >= score_last_change + args->score_step_map_change)
+			{
+				change_obstacles(field);
+				score_last_change = *scorex;
+			}
 		}
 	}
 
@@ -526,6 +536,10 @@ set_default_options(arguments_t *args)
 		args->probability_decelerator = DEFAULT_PROBABILITY_DECELERATOR;
 	if (args->probability_extra_points == -1)
 		args->probability_extra_points = DEFAULT_PROBABILITY_EXTRA_POINTS;
+
+	/* Map change */
+	if (args->score_step_map_change == -1)
+		args->score_step_map_change = DEFAULT_SCORE_STEP_MAP_CHANGE;
 }
 
 int
