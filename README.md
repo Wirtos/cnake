@@ -54,18 +54,25 @@ Map change:
 ### AUR
 If you use ArchLinux or a derivative, you can install the program from the AUR: [snake-curses](https://aur.archlinux.org/packages/snake-curses)
 
-### Dependencies
+### Gentoo
+1. Copy `distro-packages/gentoo/games-misc/` to [your local repository](https://wiki.gentoo.org/wiki/Handbook:AMD64/Portage/CustomTree#Defining_a_custom_repository)
+2. Add the testing or live keywords to `package.accept_keywords`in Portage configuration if necessary
+3. Run `emerge -av snake-curses`
+
+### Manual build
+
+#### Dependencies
 - Make
 - GCC/Clang
 - Ncurses
 
-### Build
+#### Build
 Build with `make`. That will leave you the `snake` executable.
 
-### Installation
+#### Installation
 You can directly run the compiled executable, but if you want to install it
 on your system, `make install` will do it. Notice that you can set the
 variable `PREFIX` (default to /usr/local) to your desire.
 
-### Uninstall
+#### Uninstall
 `make uninstall` (Mind the `PREFIX` too)
