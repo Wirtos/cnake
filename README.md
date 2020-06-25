@@ -59,6 +59,9 @@ If you use ArchLinux or a derivative, you can install the program from the AUR: 
 2. Add the testing or live keywords to `package.accept_keywords`in Portage configuration if necessary
 3. Run `emerge -av snake-curses`
 
+### Termux
+Install the `ncurses`, `make` and `clang` packages (`pkg install ncurses make clang`) and do the steps for manual building
+
 ### Manual build
 
 #### Dependencies
