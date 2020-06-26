@@ -97,8 +97,16 @@ delete_temp_item_list_content(temp_item_list_t til)
 static int
 get_random_empty_cell(field_t *field, coord_t *y, coord_t *x)
 {
-	coord_t empty_cells[(field->width - 2) * (field->height - 2)][2];
-	int i, j, size = 0;
+    int rows = ((field->width - 2) * (field->height - 2)),
+            cols = 2,
+            i,
+            j,
+            size = 0;
+    coord_t **empty_cells = malloc(sizeof(empty_cells) * rows);
+    for (i = 0; i < rows; i++) {
+        empty_cells[i] = calloc(1, sizeof(**empty_cells) * cols);
+    }
+
 
 	/* Find all the EMPTY cells and store their coordinates in empty_cells */
 	for (i = 1; i <= field->height - 2; i++)
@@ -119,9 +127,13 @@ get_random_empty_cell(field_t *field, coord_t *y, coord_t *x)
 		i = rand() % size;  /* Choose a random item of empty_cells */
 		*y = empty_cells[i][0];
 		*x = empty_cells[i][1];
-		return (1);
 	}
-	return (0);
+    for (i = 0; i < rows; i++) {
+        free(empty_cells[i]);
+    }
+    free(empty_cells);
+
+	return size > 0 ? 1 : 0;
 }
 
 /*

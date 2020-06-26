@@ -19,7 +19,7 @@
 #include <field.h>
 #include <snake.h>
 #include <arguments_parser.h>
-#include <ncurses.h>
+#include <curses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -73,7 +73,7 @@ set_curses_properties()
  * Updates score marker. Display in two players mode if score2 is not NULL
  */
 static void
-redraw_score(WINDOW *w_score, unsigned int score, unsigned int *score2)
+redraw_score(WINDOW *w_score, unsigned int score, const int *score2)
 {
 	if (score2)
 	{
@@ -241,7 +241,7 @@ pause(WINDOW *w_game, field_t *field, time_t delay)
 	before_pause = time(NULL);
 	getch();
 	prolong_temp_items(field, time(NULL) - before_pause);
-	timeout(delay);  /* Restore timeout */
+	timeout((int)delay);  /* Restore timeout */
 }
 
 /*
@@ -253,9 +253,9 @@ start(arguments_t *args)
 	WINDOW *w_score, *w_game, *w_keys;
 	field_t *field;
 	snake_t *snake, *snake2, *snakex;
-	unsigned int w_game_y, w_keys_height, score, score2, keep_mainloop, died;
+	int w_game_y, w_keys_height, score, score2, keep_mainloop, died;
 	unsigned int score_last_change;
-	unsigned int *scorex;
+	int *scorex;
 	time_t delay;
 
 	/* Stores who pressed the key */
@@ -290,7 +290,7 @@ start(arguments_t *args)
 	died = 0;
 	keep_mainloop = 1;
 	delay = args->starting_delay;
-	timeout(delay);
+	timeout((int)delay);
 	while (keep_mainloop)
 	{
 		remove_expired_items(field);
@@ -410,7 +410,7 @@ start(arguments_t *args)
 						delay -= args->step_delay;
 					else
 						delay = args->minimum_delay;
-					timeout(delay);
+					timeout((int)delay);
 
 					/* Items generation */
 					if (rand() % args->probability_shortener == 0)
@@ -426,7 +426,7 @@ start(arguments_t *args)
 				case DECELERATOR:
 					*scorex += POINTS_DECELERATOR;
 					delay = args->starting_delay;
-					timeout(delay);
+					timeout((int)delay);
 					break;
 				case EXTRA_POINTS:
 					*scorex += POINTS_EXTRA_POINTS;
@@ -547,7 +547,7 @@ main(int argc, char *argv[])
 {
 	arguments_t *args = parse_arguments(argc, argv);
 
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	initscr();
 
 	cbreak();             /* Do not buffer keypresses */
