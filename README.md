@@ -67,9 +67,8 @@ Install the `ncurses`, `cmake`, `make` and `clang` packages (`pkg install ncurse
 #### Dependencies
 - Make
 - GCC/Clang
-- Ncurses (PDcurses on windows)
+- NCurses (PDCurses on windows)
 - cmake
-- vcpkg (windows)
 
 #### Build
 ```bash
