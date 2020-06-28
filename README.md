@@ -60,22 +60,23 @@ If you use ArchLinux or a derivative, you can install the program from the AUR: 
 3. Run `emerge -av snake-curses`
 
 ### Termux
-Install the `ncurses`, `make` and `clang` packages (`pkg install ncurses make clang`) and do the steps for manual building
+Install the `ncurses`, `cmake`, `make` and `clang` packages (`pkg install ncurses cmake make clang`) and do the steps for manual building
 
 ### Manual build
 
 #### Dependencies
 - Make
 - GCC/Clang
-- Ncurses
+- Ncurses (PDcurses on windows)
+- cmake
+- vcpkg (windows)
 
 #### Build
-Build with `make`. That will leave you the `snake` executable.
+```bash
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+```
 
-#### Installation
-You can directly run the compiled executable, but if you want to install it
-on your system, `make install` will do it. Notice that you can set the
-variable `PREFIX` (default to /usr/local) to your desire.
-
-#### Uninstall
-`make uninstall` (Mind the `PREFIX` too)
+That will leave you the `cnake` executable.
