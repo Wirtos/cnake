@@ -157,9 +157,7 @@ advance(field_t *field, snake_t *snake)
 	{
 		case SHORTENER:
 			delete_half_snake(field, snake);
-			#ifndef __clang__  /* Hint for GCC only */
-			__attribute__((fallthrough));
-			#endif
+			/* fallthrough */
 		case DECELERATOR:
 		case EXTRA_POINTS:
 		case EMPTY:
