@@ -16,6 +16,7 @@
  */
 
 #include <field.h>
+#include <stddef.h>
 
 /*
  * Add an item to a temp_item_list_t
@@ -102,12 +103,22 @@ get_random_empty_cell(field_t *field, coord_t *y, coord_t *x)
             i,
             j,
             size = 0;
-    coord_t **empty_cells = calloc(1, sizeof(empty_cells) * rows + sizeof(**empty_cells) * cols * rows);
+    coord_t **empty_cells;
+
     {
-        coord_t *cells_row_start_ptr = (coord_t *)(empty_cells + rows);
-        for (i = 0; i < rows; i++, cells_row_start_ptr+=cols) {
-            empty_cells[i] = cells_row_start_ptr;
-        }
+        size_t alignment = offsetof(struct { coord_t *a; coord_t b; }, b) - sizeof(coord_t *);
+        coord_t *cells_row_start_ptr;
+
+        empty_cells = calloc(1,
+            sizeof(empty_cells) * rows
+            + alignment
+            + sizeof(**empty_cells) * cols * rows);
+
+        if (empty_cells == NULL) exit(EXIT_FAILURE);
+
+        cells_row_start_ptr = (coord_t *) ((char *) (empty_cells + rows) + alignment);
+
+        for (i = 0; i < rows; i++, cells_row_start_ptr += cols) empty_cells[i] = cells_row_start_ptr;
     }
 
 
