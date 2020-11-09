@@ -102,10 +102,12 @@ get_random_empty_cell(field_t *field, coord_t *y, coord_t *x)
             i,
             j,
             size = 0;
-    coord_t **empty_cells = malloc(sizeof(empty_cells) * rows);
-    coord_t *cells_arr = calloc(1, sizeof(**empty_cells) * cols * rows);
-    for (i = 0; i < rows; i++) {
-        empty_cells[i] = cells_arr + (cols * i);
+    coord_t **empty_cells = calloc(1, sizeof(empty_cells) * rows + sizeof(**empty_cells) * cols * rows);
+    {
+        coord_t *cells_row_start_ptr = (coord_t *)(empty_cells + rows);
+        for (i = 0; i < rows; i++, cells_row_start_ptr+=cols) {
+            empty_cells[i] = cells_row_start_ptr;
+        }
     }
 
 
@@ -130,7 +132,6 @@ get_random_empty_cell(field_t *field, coord_t *y, coord_t *x)
 		*x = empty_cells[i][1];
 	}
     free(empty_cells);
-	free(cells_arr);
 
 	return size > 0 ? 1 : 0;
 }
